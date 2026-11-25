@@ -2,7 +2,7 @@
   --bg-deep: #14151a;
   --grid-minor: rgba(88, 196, 221, 0.045);
   --grid-major: rgba(88, 196, 221, 0.11);
-  --glass-bg: rgba(24, 27, 36, 0.86);
+  --glass-bg: rgba(24, 27, 36, 0.88);
   --glass-border: rgba(255, 255, 255, 0.11);
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
@@ -32,7 +32,7 @@ body {
 .hud-top {
   position: fixed; top: 14px; left: 14px; right: 14px; z-index: 100;
   display: flex; justify-content: space-between; align-items: center; gap: 12px;
-  background: rgba(18, 20, 26, 0.84);
+  background: rgba(18, 20, 26, 0.85);
   backdrop-filter: blur(14px);
   padding: 9px 16px; border-radius: 16px;
   border: 1px solid var(--glass-border);
@@ -49,7 +49,7 @@ body {
 }
 
 /* Search */
-.search-wrap { position: relative; flex: 1; max-width: 300px; }
+.search-wrap { position: relative; flex: 1; max-width: 290px; }
 .search-wrap input {
   width: 100%; background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -96,7 +96,7 @@ body {
 .admin-bar {
   position: fixed; top: 68px; left: 14px; right: 14px; z-index: 95;
   display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
-  background: rgba(30, 27, 18, 0.9); backdrop-filter: blur(12px);
+  background: rgba(30, 27, 18, 0.92); backdrop-filter: blur(12px);
   border: 1px solid rgba(244, 211, 69, 0.35); border-radius: 12px; padding: 8px 16px;
 }
 .admin-status { font-size: 0.82rem; color: var(--manim-yellow); font-weight: 600; }
@@ -256,14 +256,14 @@ body.is-admin .node-edit-btn { display: inline-block; }
 
 /* Level 2 als aktiver Zentrum-Anker auf Mikro-Ebene */
 body[data-zoom="micro"] .node.level-2.active-anchor {
-  background: rgba(20, 23, 32, 0.95);
+  background: rgba(18, 21, 30, 0.96);
   border: 2px solid var(--node-color);
-  box-shadow: 0 0 34px -8px var(--node-color);
+  box-shadow: 0 0 36px -6px var(--node-color);
 }
 
 /* Level 3: Atomic Knowledge Nodes */
 .node.level-3 {
-  width: 315px; padding: 16px 18px; border-radius: 18px;
+  width: 315px; padding: 15px 17px; border-radius: 18px;
   background: rgba(22, 25, 34, 0.94); backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-top: 3px solid var(--node-color);
@@ -271,12 +271,15 @@ body[data-zoom="micro"] .node.level-2.active-anchor {
   cursor: default;
 }
 .node.level-3:hover { border-color: var(--node-color); transform: translate(-50%, -50%) translateY(-3px); }
-.node.level-3 h4 { font-size: 0.96rem; margin-bottom: 8px; color: #f8fafc; padding-right: 28px; }
+.node.level-3 h4 { font-size: 0.95rem; margin-bottom: 6px; color: #f8fafc; padding-right: 28px; }
 .node-body-text {
-  font-size: 0.83rem; line-height: 1.5; color: #cbd5e1;
+  font-size: 0.82rem; line-height: 1.48; color: #cbd5e1;
   user-select: text; overflow-wrap: break-word;
 }
 .node-body-text p { margin-bottom: 6px; }
+.node-empty-hint {
+  font-size: 0.76rem; color: rgba(148, 163, 184, 0.55); font-style: italic;
+}
 
 .wiki-jump {
   background: rgba(88, 196, 221, 0.14); color: var(--manim-blue);
@@ -285,7 +288,8 @@ body[data-zoom="micro"] .node.level-2.active-anchor {
 }
 .wiki-jump:hover { background: rgba(88, 196, 221, 0.28); }
 
-.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chips:empty { display: none; }
 .chip {
   border: 1px solid transparent; border-radius: 999px;
   padding: 5px 10px; font-size: 0.74rem; font-weight: 600;

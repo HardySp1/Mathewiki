@@ -1,5 +1,5 @@
 let appData = { titleToId: {}, nodes: [] };
-let scale = 0.35, panX = 0, panY = 0;
+let scale = 0.34, panX = 0, panY = 0;
 let activeDomainId = null;
 let activeTopicId = null;
 let showAllAdmin = false;
@@ -7,6 +7,7 @@ let showAllAdmin = false;
 let isAdmin = false;
 let ghConfig = null;
 
+const DOMAIN_IDS = new Set(['arithmetik-algebra', 'geometrie', 'analysis', 'stochastik']);
 const VAULT_STORAGE_KEY = 'mw_encrypted_vault_v1';
 const world = document.getElementById('world');
 const nodesLayer = document.getElementById('nodesLayer');
@@ -16,6 +17,13 @@ async function init() {
   try {
     const res = await fetch('data/nodes.json?v=' + Date.now());
     appData = await res.json();
+    // Sicherstellen, dass die 4 Hauptgebiete immer exakt Ebene 1 bleiben
+    appData.nodes.forEach(n => {
+      if (DOMAIN_IDS.has(n.id) || n.parentId === null) {
+        n.level = 1;
+        n.parentId = null;
+      }
+    });
   } catch (err) {
     showToast('Fehler beim Laden von data/nodes.json');
     console.error(err);
@@ -45,8 +53,8 @@ function buildDomainNav() {
 function formatWikiText(rawText, truncate = false) {
   if (!rawText) return '';
   let text = rawText;
-  if (truncate && text.length > 220) {
-    text = text.slice(0, 220) + '…';
+  if (truncate && text.length > 200) {
+    text = text.slice(0, 200) + '…';
   }
   text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   text = text.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, label, target) => {
@@ -87,6 +95,9 @@ function renderAll() {
   const nodeMap = new Map(appData.nodes.map(n => [n.id, n]));
 
   appData.nodes.forEach(n => {
+    const isRootDomain = DOMAIN_IDS.has(n.id) || n.level === 1;
+    if (isRootDomain) n.level = 1;
+
     const el = document.createElement('div');
     el.className = `node level-${n.level}`;
     el.id = 'el-' + n.id;
@@ -106,7 +117,7 @@ function renderAll() {
       el.innerHTML = `${editBtn}<span class="domain-badge">${n.domain || ''}</span><h3>${n.title}</h3><p>${shortDesc}</p>`;
       el.onclick = () => { if (!isAdmin) selectTopic(n.id); };
     } else {
-      const isLong = (n.text || '').length > 220;
+      const isLong = (n.text || '').length > 200;
       const bodyHtml = formatWikiText(n.text, true);
       const chips = (n.media || []).map((m, idx) => {
         const icon = m.type === 'ggb' ? '⬡' : '▶';
@@ -115,7 +126,8 @@ function renderAll() {
       if (isLong) {
         chips.push(`<button class="chip expand" onclick="event.stopPropagation(); openFullTextModal('${n.id}')">Mehr lesen</button>`);
       }
-      el.innerHTML = `${editBtn}<span class="domain-badge">${n.domain || ''}</span><h4>${n.title}</h4><div class="node-body-text">${bodyHtml}</div><div class="chips">${chips.join('')}</div>`;
+      const emptyHint = (!bodyHtml && chips.length === 0) ? `<div class="node-empty-hint">Inhalt folgt</div>` : '';
+      el.innerHTML = `${editBtn}<span class="domain-badge">${n.domain || ''}</span><h4>${n.title}</h4>${emptyHint}<div class="node-body-text">${bodyHtml}</div><div class="chips">${chips.join('')}</div>`;
     }
 
     el.addEventListener('mouseenter', () => toggleChildFlows(n.id, true));
@@ -166,7 +178,6 @@ function toggleChildFlows(parentId, active) {
   });
 }
 
-// Hilfsfunktionen für Hierarchie & Fokus
 function getAncestors(nodeId) {
   const chain = new Set();
   const nodeMap = new Map(appData.nodes.map(n => [n.id, n]));
@@ -207,7 +218,6 @@ function findNearestNodeAtLevel(level, worldX, worldY) {
   return best;
 }
 
-// Steuert strikt, welche Ebenen auf welcher Zoomstufe sichtbar sind
 function applyVisibilityFilter() {
   const mode = document.body.getAttribute('data-zoom') || 'macro';
   const visibleIds = new Set();
@@ -215,10 +225,8 @@ function applyVisibilityFilter() {
   if (showAllAdmin && isAdmin) {
     appData.nodes.forEach(n => visibleIds.add(n.id));
   } else if (mode === 'macro') {
-    // Makro: NUR Ebene 1 sichtbar
     appData.nodes.filter(n => n.level === 1).forEach(n => visibleIds.add(n.id));
   } else if (mode === 'meso') {
-    // Meso: Ebene 1 KOMPLETT ausgeblendet! Nur Ebene 2 des aktiven Hauptgebiets sichtbar
     const centerWorldX = -panX / scale;
     const centerWorldY = -panY / scale;
     const domain = (activeDomainId && appData.nodes.find(n => n.id === activeDomainId))
@@ -228,7 +236,6 @@ function applyVisibilityFilter() {
       appData.nodes.filter(n => n.level === 2 && n.parentId === domain.id).forEach(n => visibleIds.add(n.id));
     }
   } else if (mode === 'micro') {
-    // Mikro: Ebene 1 KOMPLETT ausgeblendet! Nur aktives Themengebiet (Ebene 2) + dessen Bausteine (Ebene 3) sichtbar
     const centerWorldX = -panX / scale;
     const centerWorldY = -panY / scale;
     const topic = (activeTopicId && appData.nodes.find(n => n.id === activeTopicId))
@@ -245,7 +252,6 @@ function applyVisibilityFilter() {
     }
   }
 
-  // Knoten ein-/ausblenden
   appData.nodes.forEach(n => {
     const el = document.getElementById('el-' + n.id);
     if (!el) return;
@@ -254,7 +260,6 @@ function applyVisibilityFilter() {
     el.classList.toggle('active-anchor', mode === 'micro' && n.id === activeTopicId);
   });
 
-  // Nur Kanten anzeigen, deren beide Endpunkte sichtbar sind
   document.querySelectorAll('.edge-path, .edge-flow').forEach(path => {
     const bothVisible = visibleIds.has(path.dataset.from) && visibleIds.has(path.dataset.to);
     path.classList.toggle('edge-hidden', !bothVisible);
@@ -303,8 +308,8 @@ function updateHudContext() {
 function updateTransform() {
   world.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
   let mode = 'macro';
-  if (scale >= 0.60 && scale < 1.02) mode = 'meso';
-  else if (scale >= 1.02) mode = 'micro';
+  if (scale >= 0.60 && scale < 0.96) mode = 'meso';
+  else if (scale >= 0.96) mode = 'micro';
   document.body.setAttribute('data-zoom', mode);
   applyVisibilityFilter();
 }
@@ -319,7 +324,7 @@ function focusAt(worldX, worldY, targetScale) {
 function focusOverview() {
   activeDomainId = null;
   activeTopicId = null;
-  focusAt(0, 0, 0.35);
+  focusAt(0, 0, 0.34);
 }
 
 function selectDomain(domainId) {
@@ -327,7 +332,7 @@ function selectDomain(domainId) {
   if (!d) return;
   activeDomainId = d.id;
   activeTopicId = null;
-  focusAt(d.x, d.y, 0.78);
+  focusAt(d.x, d.y, 0.76);
 }
 
 function selectTopic(topicId) {
@@ -335,7 +340,8 @@ function selectTopic(topicId) {
   if (!t) return;
   activeTopicId = t.id;
   activeDomainId = t.parentId;
-  focusAt(t.x, t.y, 1.15);
+  // Etwas weiterer Zoomfaktor (0.98), damit alle umliegenden Bausteine sofort übersichtlich im Blick sind
+  focusAt(t.x, t.y, 0.98);
 }
 
 function jumpToNode(nodeId) {
@@ -350,7 +356,7 @@ function jumpToNode(nodeId) {
     const dom = getLevel1Ancestor(n.id);
     if (top) activeTopicId = top.id;
     if (dom) activeDomainId = dom.id;
-    focusAt(n.x, n.y, 1.22);
+    focusAt(n.x, n.y, 1.05);
   }
   setTimeout(() => {
     const el = document.getElementById('el-' + n.id);
@@ -372,14 +378,13 @@ viewport.addEventListener('wheel', e => {
   e.preventDefault();
   const factor = e.deltaY < 0 ? 1.12 : 0.89;
   const nextScale = Math.min(2.2, Math.max(0.24, scale * factor));
-  // Beim Reinzoomen automatisch nächstgelegenes Gebiet/Thema fokussieren
   const centerWorldX = -panX / scale;
   const centerWorldY = -panY / scale;
   if (scale < 0.60 && nextScale >= 0.60 && !activeDomainId) {
     const nearestDom = findNearestNodeAtLevel(1, centerWorldX, centerWorldY);
     if (nearestDom) activeDomainId = nearestDom.id;
   }
-  if (scale < 1.02 && nextScale >= 1.02 && !activeTopicId) {
+  if (scale < 0.96 && nextScale >= 0.96 && !activeTopicId) {
     const nearestTop = findNearestNodeAtLevel(2, centerWorldX, centerWorldY);
     if (nearestTop) activeTopicId = nearestTop.id;
   }
@@ -478,7 +483,7 @@ function extractYouTubeId(url) {
 }
 
 // =========================================================================
-// VERSCHLÜSSELTER PASSWORT-TRESOR (Kein ständiges Nachsehen des Tokens nötig)
+// PASSWORT-TRESOR
 // =========================================================================
 async function deriveAesKey(password, saltBytes) {
   const enc = new TextEncoder();
@@ -629,6 +634,40 @@ function toggleShowAll(checked) {
   applyVisibilityFilter();
 }
 
+// Admin-Helfer: Aktives Cluster auf Knopfdruck symmetrisch im Raster aufräumen
+function autoArrangeActiveCluster() {
+  if (!activeTopicId) {
+    showToast('Bitte zuerst in ein Themengebiet (Ebene 3) hineinzoomen');
+    return;
+  }
+  const topic = appData.nodes.find(n => n.id === activeTopicId);
+  if (!topic) return;
+
+  const clusterCards = appData.nodes.filter(n => n.level === 3 && getAncestors(n.id).has(topic.id));
+  const leftWing = clusterCards.filter((_, i) => i % 2 === 0);
+  const rightWing = clusterCards.filter((_, i) => i % 2 === 1);
+  const colW = 365, rowH = 250, maxRows = 4;
+
+  rightWing.forEach((card, i) => {
+    const col = Math.floor(i / maxRows);
+    const row = i % maxRows;
+    const rowsInCol = Math.min(maxRows, rightWing.length - col * maxRows);
+    card.x = Math.round(topic.x + 380 + col * colW);
+    card.y = Math.round(topic.y + (row - (rowsInCol - 1) / 2) * rowH);
+  });
+
+  leftWing.forEach((card, i) => {
+    const col = Math.floor(i / maxRows);
+    const row = i % maxRows;
+    const rowsInCol = Math.min(maxRows, leftWing.length - col * maxRows);
+    card.x = Math.round(topic.x - 380 - col * colW);
+    card.y = Math.round(topic.y + (row - (rowsInCol - 1) / 2) * rowH);
+  });
+
+  renderAll();
+  showToast('Cluster sauber ausgerichtet');
+}
+
 function attachAdminDrag(el, nodeObj) {
   let dragging = false, startMouseX = 0, startMouseY = 0, origX = 0, origY = 0;
   el.addEventListener('mousedown', e => {
@@ -669,16 +708,23 @@ function openNodeEditor(nodeId) {
   ggbList.innerHTML = '';
   vidList.innerHTML = '';
 
+  const levelWrap = document.getElementById('ed-level-wrap');
+  const levelSelect = document.getElementById('ed-level');
+
   if (nodeId) {
     const n = appData.nodes.find(item => item.id === nodeId);
-    document.getElementById('ed-heading').textContent = 'Baustein bearbeiten';
+    const isRootDomain = DOMAIN_IDS.has(n.id) || n.level === 1;
+    if (isRootDomain) n.level = 1;
+
+    document.getElementById('ed-heading').textContent = isRootDomain ? 'Hauptgebiet (Kreis) bearbeiten' : 'Baustein bearbeiten';
     document.getElementById('ed-id').value = n.id;
     document.getElementById('ed-title').value = n.title;
-    // Ebene exakt beibehalten (auch Ebene 1 bleibt Ebene 1 -> Kreisform!)
-    document.getElementById('ed-level').value = String(n.level);
+    levelSelect.value = String(n.level);
+    // Hauptgebiete (Ebene 1) behalten ihre Ebene fest verriegelt, damit sie niemals versehentlich zu Rechtecken werden
+    levelWrap.classList.toggle('hidden', isRootDomain);
     parentSelect.value = n.parentId || '';
     document.getElementById('ed-text').value = n.text || '';
-    document.getElementById('ed-delete-btn').classList.toggle('hidden', n.level === 1);
+    document.getElementById('ed-delete-btn').classList.toggle('hidden', isRootDomain);
 
     (n.media || []).forEach(m => {
       if (m.type === 'ggb') addMediaRow('ggb', m.label, m.ggbId || m.url || '');
@@ -688,7 +734,8 @@ function openNodeEditor(nodeId) {
     document.getElementById('ed-heading').textContent = 'Neuen Baustein anlegen';
     document.getElementById('ed-id').value = '';
     document.getElementById('ed-title').value = '';
-    document.getElementById('ed-level').value = activeTopicId ? '3' : '2';
+    levelWrap.classList.remove('hidden');
+    levelSelect.value = activeTopicId ? '3' : '2';
     if (activeTopicId) parentSelect.value = activeTopicId;
     else if (activeDomainId) parentSelect.value = activeDomainId;
     document.getElementById('ed-text').value = '';
@@ -716,7 +763,9 @@ function saveNodeFromEditor(e) {
   e.preventDefault();
   const id = document.getElementById('ed-id').value;
   const title = document.getElementById('ed-title').value.trim();
-  const level = parseInt(document.getElementById('ed-level').value, 10);
+  const isRootDomain = DOMAIN_IDS.has(id);
+  const parsedLevel = parseInt(document.getElementById('ed-level').value, 10);
+  const level = isRootDomain ? 1 : (Number.isNaN(parsedLevel) ? 3 : parsedLevel);
   const parentId = level === 1 ? null : document.getElementById('ed-parent').value;
   const text = document.getElementById('ed-text').value;
 
@@ -752,8 +801,8 @@ function saveNodeFromEditor(e) {
       domain: level === 1 ? title : (parentNode ? parentNode.domain : 'Algebra'),
       title,
       text,
-      x: parentNode ? parentNode.x + 260 : 0,
-      y: parentNode ? parentNode.y + 180 : 0,
+      x: parentNode ? parentNode.x + 380 : 0,
+      y: parentNode ? parentNode.y : 0,
       color: parentNode ? parentNode.color : '#58C4DD',
       media
     });
@@ -767,7 +816,7 @@ function saveNodeFromEditor(e) {
 
 function deleteCurrentNode() {
   const id = document.getElementById('ed-id').value;
-  if (!id) return;
+  if (!id || DOMAIN_IDS.has(id)) return;
   appData.nodes = appData.nodes.filter(n => n.id !== id);
   renderAll();
   closeModal('editorModal');

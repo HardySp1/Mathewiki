@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body data-zoom="macro">
 
@@ -38,6 +38,7 @@
         <input type="checkbox" id="showAllToggle" onchange="toggleShowAll(this.checked)" />
         Alle Ebenen einblenden
       </label>
+      <button class="btn-secondary" onclick="autoArrangeActiveCluster()" title="Aktuelles Themen-Cluster sauber im Raster ausrichten">Cluster aufräumen</button>
       <button class="btn-secondary" onclick="openNodeEditor(null)">+ Neuer Baustein</button>
       <button class="btn-secondary" onclick="exportVaultString()" title="Verschlüsselten Zugang für Zweitgerät kopieren">Geräte-Sync</button>
       <button id="saveGithubBtn" class="btn-primary" onclick="saveToGitHub()">Auf GitHub speichern</button>
@@ -72,7 +73,7 @@
     </div>
   </div>
 
-  <!-- Admin-Login Modal (Passwort-Tresor + Einmal-Setup) -->
+  <!-- Admin-Login Modal -->
   <div id="authModal" class="modal-backdrop" onclick="if(event.target===this) closeModal('authModal')">
     <div class="modal-card modal-small">
       <div class="modal-header">
@@ -80,9 +81,8 @@
         <button class="crumb-btn" onclick="closeModal('authModal')">&times;</button>
       </div>
 
-      <!-- Ansicht A: Schnelles Entsperren per eigenem Passwort -->
       <form id="unlockForm" class="editor-form hidden" onsubmit="handleVaultUnlock(event)">
-        <p class="form-hint">Dein GitHub-Zugang ist verschlüsselt in diesem Browser hinterlegt. Gib dein eigenes Admin-Passwort ein:</p>
+        <p class="form-hint">Dein GitHub-Zugang ist verschlüsselt hinterlegt. Gib dein Admin-Passwort ein:</p>
         <label>Admin-Passwort
           <input type="password" id="unlockPassword" placeholder="Dein Passwort..." required autocomplete="current-password" />
         </label>
@@ -92,9 +92,8 @@
         </div>
       </form>
 
-      <!-- Ansicht B: Einmaliges Hinterlegen (Token + eigenes Passwort) -->
       <form id="setupForm" class="editor-form" onsubmit="handleVaultSetup(event)">
-        <p class="form-hint">Hinterlege dein GitHub-Token <strong>einmalig</strong> und schütze es mit einem kurzen eigenen Passwort. Danach meldest du dich nur noch mit diesem Passwort an.</p>
+        <p class="form-hint">Hinterlege dein GitHub-Token <strong>einmalig</strong> mit einem eigenen kurzen Passwort. Danach meldest du dich nur noch mit diesem Passwort an.</p>
         <div class="form-row">
           <label>GitHub-User
             <input type="text" id="ghOwner" value="hardysp1" required />
@@ -135,7 +134,7 @@
           <label>Titel
             <input type="text" id="ed-title" required />
           </label>
-          <label>Ebene
+          <label id="ed-level-wrap">Ebene
             <select id="ed-level" onchange="toggleParentSelectVisibility()">
               <option value="1">Ebene 1 (Hauptgebiet-Kreis)</option>
               <option value="2">Ebene 2 (Themengebiet)</option>
@@ -177,6 +176,6 @@
 
   <div id="toast" class="toast hidden"></div>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
