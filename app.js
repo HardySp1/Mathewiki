@@ -1,8 +1,13 @@
 let appData = { titleToId: {}, nodes: [] };
-let scale = 0.38, panX = 0, panY = 0;
+let scale = 0.35, panX = 0, panY = 0;
+let activeDomainId = null;
+let activeTopicId = null;
+let showAllAdmin = false;
+
 let isAdmin = false;
 let ghConfig = null;
 
+const VAULT_STORAGE_KEY = 'mw_encrypted_vault_v1';
 const world = document.getElementById('world');
 const nodesLayer = document.getElementById('nodesLayer');
 const edgesSvg = document.getElementById('edges');
@@ -19,32 +24,31 @@ async function init() {
   buildDomainNav();
   renderAll();
   setupSearch();
-  updateTransform();
+  focusOverview();
 }
 
 function buildDomainNav() {
   const nav = document.getElementById('domainNav');
-  nav.innerHTML = `<button class="crumb-btn" onclick="focusAt(0, 0, 0.38)">Übersicht</button>`;
+  nav.innerHTML = `<button class="crumb-btn" id="crumb-overview" onclick="focusOverview()">Übersicht</button>`;
   appData.nodes.filter(n => n.level === 1).forEach(d => {
     const btn = document.createElement('button');
     btn.className = 'crumb-btn';
+    btn.id = 'crumb-' + d.id;
     btn.textContent = d.title;
-    btn.style.borderColor = d.color + '55';
-    btn.onclick = () => focusAt(d.x, d.y, 0.78);
+    btn.style.borderColor = d.color + '66';
+    btn.style.color = d.color;
+    btn.onclick = () => selectDomain(d.id);
     nav.appendChild(btn);
   });
 }
 
-// Konvertiert TiddlyWiki-Links [[Label|Ziel]] oder [[Ziel]] in interaktive Sprung-Buttons
 function formatWikiText(rawText, truncate = false) {
   if (!rawText) return '';
   let text = rawText;
   if (truncate && text.length > 220) {
     text = text.slice(0, 220) + '…';
   }
-  // Escape HTML tags except safe line breaks
   text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  // Replace [[Label|Target]] and [[Target]]
   text = text.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, label, target) => {
     const destTitle = (target || label).trim();
     const targetId = appData.titleToId[destTitle];
@@ -93,12 +97,14 @@ function renderAll() {
     const editBtn = `<button class="node-edit-btn" onclick="event.stopPropagation(); openNodeEditor('${n.id}')">✎</button>`;
 
     if (n.level === 1) {
-      el.innerHTML = `${editBtn}<span class="domain-pill">${n.tag || 'Gebiet'}</span><h2>${n.title}</h2><p>${n.text || ''}</p>`;
-      el.onclick = () => { if (!isAdmin) focusAt(n.x, n.y, 0.78); };
+      el.innerHTML = `${editBtn}<span class="domain-pill">${n.tag || 'Hauptgebiet'}</span><h2>${n.title}</h2><p>${n.text || ''}</p>`;
+      el.onclick = () => { if (!isAdmin) selectDomain(n.id); };
     } else if (n.level === 2) {
-      const shortDesc = n.text ? n.text.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, '$1').slice(0, 95) + (n.text.length > 95 ? '…' : '') : 'Themencluster erkunden';
-      el.innerHTML = `${editBtn}<h3>${n.title}</h3><p>${shortDesc}</p>`;
-      el.onclick = () => { if (!isAdmin) focusAt(n.x, n.y, 1.2); };
+      const shortDesc = n.text
+        ? n.text.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, '$1').slice(0, 95) + (n.text.length > 95 ? '…' : '')
+        : 'Themenbereich erkunden';
+      el.innerHTML = `${editBtn}<span class="domain-badge">${n.domain || ''}</span><h3>${n.title}</h3><p>${shortDesc}</p>`;
+      el.onclick = () => { if (!isAdmin) selectTopic(n.id); };
     } else {
       const isLong = (n.text || '').length > 220;
       const bodyHtml = formatWikiText(n.text, true);
@@ -109,7 +115,7 @@ function renderAll() {
       if (isLong) {
         chips.push(`<button class="chip expand" onclick="event.stopPropagation(); openFullTextModal('${n.id}')">Mehr lesen</button>`);
       }
-      el.innerHTML = `${editBtn}<h4>${n.title}</h4><div class="node-body-text">${bodyHtml}</div><div class="chips">${chips.join('')}</div>`;
+      el.innerHTML = `${editBtn}<span class="domain-badge">${n.domain || ''}</span><h4>${n.title}</h4><div class="node-body-text">${bodyHtml}</div><div class="chips">${chips.join('')}</div>`;
     }
 
     el.addEventListener('mouseenter', () => toggleChildFlows(n.id, true));
@@ -120,6 +126,7 @@ function renderAll() {
 
   drawEdges(nodeMap);
   renderMath(nodesLayer);
+  applyVisibilityFilter();
 }
 
 function drawEdges(nodeMap) {
@@ -132,14 +139,18 @@ function drawEdges(nodeMap) {
     const base = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     base.setAttribute('d', d);
     base.setAttribute('class', 'edge-path');
+    base.dataset.from = n.parentId;
+    base.dataset.to = n.id;
     base.setAttribute('stroke', n.color || '#58C4DD');
-    base.setAttribute('stroke-opacity', n.level === 2 ? '0.32' : '0.22');
-    base.setAttribute('stroke-width', n.level === 2 ? '2.5' : '1.6');
+    base.setAttribute('stroke-opacity', n.level === 2 ? '0.35' : '0.26');
+    base.setAttribute('stroke-width', n.level === 2 ? '2.4' : '1.8');
     edgesSvg.appendChild(base);
 
     const flow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     flow.setAttribute('d', d);
     flow.setAttribute('class', 'edge-flow');
+    flow.dataset.from = n.parentId;
+    flow.dataset.to = n.id;
     flow.setAttribute('data-parent', n.parentId);
     flow.setAttribute('stroke', n.color || '#58C4DD');
     flow.setAttribute('stroke-width', n.level === 2 ? '3' : '2.2');
@@ -148,16 +159,154 @@ function drawEdges(nodeMap) {
 }
 
 function toggleChildFlows(parentId, active) {
-  document.querySelectorAll(`.edge-flow[data-parent="${parentId}"]`).forEach(p => p.classList.toggle('active', active));
+  document.querySelectorAll(`.edge-flow[data-parent="${parentId}"]`).forEach(p => {
+    if (!p.classList.contains('edge-hidden')) {
+      p.classList.toggle('active', active);
+    }
+  });
+}
+
+// Hilfsfunktionen für Hierarchie & Fokus
+function getAncestors(nodeId) {
+  const chain = new Set();
+  const nodeMap = new Map(appData.nodes.map(n => [n.id, n]));
+  let curr = nodeMap.get(nodeId);
+  while (curr) {
+    chain.add(curr.id);
+    curr = curr.parentId ? nodeMap.get(curr.parentId) : null;
+  }
+  return chain;
+}
+
+function getLevel2Ancestor(nodeId) {
+  const nodeMap = new Map(appData.nodes.map(n => [n.id, n]));
+  let curr = nodeMap.get(nodeId);
+  while (curr) {
+    if (curr.level === 2) return curr;
+    curr = curr.parentId ? nodeMap.get(curr.parentId) : null;
+  }
+  return null;
+}
+
+function getLevel1Ancestor(nodeId) {
+  const nodeMap = new Map(appData.nodes.map(n => [n.id, n]));
+  let curr = nodeMap.get(nodeId);
+  while (curr) {
+    if (curr.level === 1) return curr;
+    curr = curr.parentId ? nodeMap.get(curr.parentId) : null;
+  }
+  return null;
+}
+
+function findNearestNodeAtLevel(level, worldX, worldY) {
+  let best = null, bestDist = Infinity;
+  appData.nodes.filter(n => n.level === level).forEach(n => {
+    const d = Math.hypot(n.x - worldX, n.y - worldY);
+    if (d < bestDist) { bestDist = d; best = n; }
+  });
+  return best;
+}
+
+// Steuert strikt, welche Ebenen auf welcher Zoomstufe sichtbar sind
+function applyVisibilityFilter() {
+  const mode = document.body.getAttribute('data-zoom') || 'macro';
+  const visibleIds = new Set();
+
+  if (showAllAdmin && isAdmin) {
+    appData.nodes.forEach(n => visibleIds.add(n.id));
+  } else if (mode === 'macro') {
+    // Makro: NUR Ebene 1 sichtbar
+    appData.nodes.filter(n => n.level === 1).forEach(n => visibleIds.add(n.id));
+  } else if (mode === 'meso') {
+    // Meso: Ebene 1 KOMPLETT ausgeblendet! Nur Ebene 2 des aktiven Hauptgebiets sichtbar
+    const centerWorldX = -panX / scale;
+    const centerWorldY = -panY / scale;
+    const domain = (activeDomainId && appData.nodes.find(n => n.id === activeDomainId))
+      || findNearestNodeAtLevel(1, centerWorldX, centerWorldY);
+    if (domain) {
+      activeDomainId = domain.id;
+      appData.nodes.filter(n => n.level === 2 && n.parentId === domain.id).forEach(n => visibleIds.add(n.id));
+    }
+  } else if (mode === 'micro') {
+    // Mikro: Ebene 1 KOMPLETT ausgeblendet! Nur aktives Themengebiet (Ebene 2) + dessen Bausteine (Ebene 3) sichtbar
+    const centerWorldX = -panX / scale;
+    const centerWorldY = -panY / scale;
+    const topic = (activeTopicId && appData.nodes.find(n => n.id === activeTopicId))
+      || findNearestNodeAtLevel(2, centerWorldX, centerWorldY);
+    if (topic) {
+      activeTopicId = topic.id;
+      activeDomainId = topic.parentId;
+      visibleIds.add(topic.id);
+      appData.nodes.forEach(n => {
+        if (n.level === 3 && getAncestors(n.id).has(topic.id)) {
+          visibleIds.add(n.id);
+        }
+      });
+    }
+  }
+
+  // Knoten ein-/ausblenden
+  appData.nodes.forEach(n => {
+    const el = document.getElementById('el-' + n.id);
+    if (!el) return;
+    const isVis = visibleIds.has(n.id);
+    el.classList.toggle('node-hidden', !isVis);
+    el.classList.toggle('active-anchor', mode === 'micro' && n.id === activeTopicId);
+  });
+
+  // Nur Kanten anzeigen, deren beide Endpunkte sichtbar sind
+  document.querySelectorAll('.edge-path, .edge-flow').forEach(path => {
+    const bothVisible = visibleIds.has(path.dataset.from) && visibleIds.has(path.dataset.to);
+    path.classList.toggle('edge-hidden', !bothVisible);
+  });
+
+  updateHudContext();
+}
+
+function updateHudContext() {
+  const mode = document.body.getAttribute('data-zoom') || 'macro';
+  const indicator = document.getElementById('zoom-indicator');
+  const brandDot = document.getElementById('brandDot');
+
+  document.querySelectorAll('.crumb-btn').forEach(b => b.classList.remove('active'));
+
+  if (mode === 'macro') {
+    indicator.textContent = 'Ebene 1: Übersicht';
+    indicator.style.color = '#58C4DD';
+    indicator.style.borderColor = 'rgba(88,196,221,0.3)';
+    brandDot.style.background = '#58C4DD';
+    brandDot.style.boxShadow = '0 0 12px #58C4DD';
+    const ov = document.getElementById('crumb-overview');
+    if (ov) ov.classList.add('active');
+  } else {
+    const dom = appData.nodes.find(n => n.id === activeDomainId);
+    const col = dom ? dom.color : '#58C4DD';
+    brandDot.style.background = col;
+    brandDot.style.boxShadow = `0 0 12px ${col}`;
+    indicator.style.color = col;
+    indicator.style.borderColor = col + '55';
+
+    if (dom) {
+      const cb = document.getElementById('crumb-' + dom.id);
+      if (cb) cb.classList.add('active');
+    }
+
+    if (mode === 'meso') {
+      indicator.textContent = dom ? `${dom.title} · Themengebiete` : 'Themengebiete';
+    } else {
+      const top = appData.nodes.find(n => n.id === activeTopicId);
+      indicator.textContent = top ? `${dom ? dom.title + ' › ' : ''}${top.title}` : 'Lernbausteine';
+    }
+  }
 }
 
 function updateTransform() {
   world.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-  let mode = 'macro', label = 'Übersicht';
-  if (scale >= 0.62 && scale < 1.05) { mode = 'meso'; label = 'Themengebiete'; }
-  else if (scale >= 1.05) { mode = 'micro'; label = 'Lernbausteine'; }
+  let mode = 'macro';
+  if (scale >= 0.60 && scale < 1.02) mode = 'meso';
+  else if (scale >= 1.02) mode = 'micro';
   document.body.setAttribute('data-zoom', mode);
-  document.getElementById('zoom-indicator').textContent = `${label} (${Math.round(scale * 100)}%)`;
+  applyVisibilityFilter();
 }
 
 function focusAt(worldX, worldY, targetScale) {
@@ -167,20 +316,53 @@ function focusAt(worldX, worldY, targetScale) {
   updateTransform();
 }
 
+function focusOverview() {
+  activeDomainId = null;
+  activeTopicId = null;
+  focusAt(0, 0, 0.35);
+}
+
+function selectDomain(domainId) {
+  const d = appData.nodes.find(n => n.id === domainId);
+  if (!d) return;
+  activeDomainId = d.id;
+  activeTopicId = null;
+  focusAt(d.x, d.y, 0.78);
+}
+
+function selectTopic(topicId) {
+  const t = appData.nodes.find(n => n.id === topicId);
+  if (!t) return;
+  activeTopicId = t.id;
+  activeDomainId = t.parentId;
+  focusAt(t.x, t.y, 1.15);
+}
+
 function jumpToNode(nodeId) {
   const n = appData.nodes.find(item => item.id === nodeId);
   if (!n) return;
-  const targetScale = n.level === 1 ? 0.78 : (n.level === 2 ? 1.15 : 1.25);
-  focusAt(n.x, n.y, targetScale);
-  const el = document.getElementById('el-' + n.id);
-  if (el) {
-    el.style.boxShadow = '0 0 36px #58C4DD';
-    setTimeout(() => { el.style.boxShadow = ''; }, 1400);
+  if (n.level === 1) {
+    selectDomain(n.id);
+  } else if (n.level === 2) {
+    selectTopic(n.id);
+  } else {
+    const top = getLevel2Ancestor(n.id);
+    const dom = getLevel1Ancestor(n.id);
+    if (top) activeTopicId = top.id;
+    if (dom) activeDomainId = dom.id;
+    focusAt(n.x, n.y, 1.22);
   }
+  setTimeout(() => {
+    const el = document.getElementById('el-' + n.id);
+    if (el) {
+      el.style.boxShadow = `0 0 38px ${n.color || '#58C4DD'}`;
+      setTimeout(() => { el.style.boxShadow = ''; }, 1400);
+    }
+  }, 120);
 }
 
 function stepZoom(factor) {
-  scale = Math.min(2.2, Math.max(0.25, scale * factor));
+  scale = Math.min(2.2, Math.max(0.24, scale * factor));
   updateTransform();
 }
 
@@ -189,7 +371,19 @@ const viewport = document.getElementById('viewport');
 viewport.addEventListener('wheel', e => {
   e.preventDefault();
   const factor = e.deltaY < 0 ? 1.12 : 0.89;
-  scale = Math.min(2.2, Math.max(0.25, scale * factor));
+  const nextScale = Math.min(2.2, Math.max(0.24, scale * factor));
+  // Beim Reinzoomen automatisch nächstgelegenes Gebiet/Thema fokussieren
+  const centerWorldX = -panX / scale;
+  const centerWorldY = -panY / scale;
+  if (scale < 0.60 && nextScale >= 0.60 && !activeDomainId) {
+    const nearestDom = findNearestNodeAtLevel(1, centerWorldX, centerWorldY);
+    if (nearestDom) activeDomainId = nearestDom.id;
+  }
+  if (scale < 1.02 && nextScale >= 1.02 && !activeTopicId) {
+    const nearestTop = findNearestNodeAtLevel(2, centerWorldX, centerWorldY);
+    if (nearestTop) activeTopicId = nearestTop.id;
+  }
+  scale = nextScale;
   updateTransform();
 }, { passive: false });
 
@@ -224,7 +418,7 @@ function setupSearch() {
     ).slice(0, 12);
     box.innerHTML = hits.map(h =>
       `<div class="search-item" onclick="jumpToNode('${h.id}'); document.getElementById('searchResults').classList.remove('open');">
-        <span>${h.title}</span><span class="search-domain">${h.domain || ''}</span>
+        <span>${h.title}</span><span class="search-domain" style="color:${h.color || '#94a3b8'}">${h.domain || ''}</span>
       </div>`
     ).join('');
     box.classList.toggle('open', hits.length > 0);
@@ -283,23 +477,122 @@ function extractYouTubeId(url) {
   return m ? m[1] : null;
 }
 
-// --- ADMIN MODE & GITHUB API SYNC ---
-function openAdminAuth() {
-  document.getElementById('authModal').classList.add('open');
+// =========================================================================
+// VERSCHLÜSSELTER PASSWORT-TRESOR (Kein ständiges Nachsehen des Tokens nötig)
+// =========================================================================
+async function deriveAesKey(password, saltBytes) {
+  const enc = new TextEncoder();
+  const baseKey = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt: saltBytes, iterations: 120000, hash: 'SHA-256' },
+    baseKey,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt']
+  );
 }
 
-function handleAdminLogin(e) {
+async function encryptVault(payloadObj, password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await deriveAesKey(password, salt);
+  const encoded = new TextEncoder().encode(JSON.stringify(payloadObj));
+  const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoded);
+  return JSON.stringify({
+    s: btoa(String.fromCharCode(...salt)),
+    i: btoa(String.fromCharCode(...iv)),
+    c: btoa(String.fromCharCode(...new Uint8Array(cipher)))
+  });
+}
+
+async function decryptVault(vaultJsonStr, password) {
+  const { s, i, c } = JSON.parse(vaultJsonStr);
+  const salt = Uint8Array.from(atob(s), ch => ch.charCodeAt(0));
+  const iv = Uint8Array.from(atob(i), ch => ch.charCodeAt(0));
+  const cipher = Uint8Array.from(atob(c), ch => ch.charCodeAt(0));
+  const key = await deriveAesKey(password, salt);
+  const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, cipher);
+  return JSON.parse(new TextDecoder().decode(plain));
+}
+
+function switchAuthView(view) {
+  const hasVault = Boolean(localStorage.getItem(VAULT_STORAGE_KEY));
+  const target = view || (hasVault ? 'unlock' : 'setup');
+  document.getElementById('unlockForm').classList.toggle('hidden', target !== 'unlock');
+  document.getElementById('setupForm').classList.toggle('hidden', target !== 'setup');
+  document.getElementById('authModalTitle').textContent =
+    target === 'unlock' ? 'Admin-Passwort eingeben' : 'Admin-Zugang einmalig einrichten';
+}
+
+function openAdminAuth() {
+  switchAuthView();
+  document.getElementById('authModal').classList.add('open');
+  setTimeout(() => {
+    const inp = document.getElementById('unlockForm').classList.contains('hidden')
+      ? document.getElementById('ghToken')
+      : document.getElementById('unlockPassword');
+    if (inp) inp.focus();
+  }, 50);
+}
+
+async function handleVaultSetup(e) {
   e.preventDefault();
-  ghConfig = {
+  const cfg = {
     owner: document.getElementById('ghOwner').value.trim(),
     repo: document.getElementById('ghRepo').value.trim(),
     branch: document.getElementById('ghBranch').value.trim(),
     token: document.getElementById('ghToken').value.trim()
   };
-  sessionStorage.setItem('mw_gh_cfg', JSON.stringify(ghConfig));
+  const pw = document.getElementById('newVaultPassword').value;
+  const encrypted = await encryptVault(cfg, pw);
+  localStorage.setItem(VAULT_STORAGE_KEY, encrypted);
+  sessionStorage.setItem('mw_gh_cfg', JSON.stringify(cfg));
+  ghConfig = cfg;
   activateAdminUI();
   closeModal('authModal');
-  showToast('Admin-Modus aktiviert');
+  showToast('Tresor gespeichert & Admin-Modus aktiv!');
+}
+
+async function handleVaultUnlock(e) {
+  e.preventDefault();
+  const pw = document.getElementById('unlockPassword').value;
+  const vaultStr = localStorage.getItem(VAULT_STORAGE_KEY);
+  try {
+    const cfg = await decryptVault(vaultStr, pw);
+    ghConfig = cfg;
+    sessionStorage.setItem('mw_gh_cfg', JSON.stringify(cfg));
+    document.getElementById('unlockPassword').value = '';
+    activateAdminUI();
+    closeModal('authModal');
+    showToast('Willkommen zurück! Admin-Modus aktiv.');
+  } catch {
+    alert('Falsches Admin-Passwort.');
+  }
+}
+
+function exportVaultString() {
+  const v = localStorage.getItem(VAULT_STORAGE_KEY);
+  if (!v) return;
+  navigator.clipboard.writeText(v).then(() => {
+    showToast('Verschlüsselter Sync-Code in Zwischenablage kopiert!');
+  });
+}
+
+function importVaultPrompt() {
+  const code = prompt('Füge hier den verschlüsselten Sync-Code von deinem anderen Gerät ein:');
+  if (!code) return;
+  try {
+    const parsed = JSON.parse(code.trim());
+    if (parsed.s && parsed.i && parsed.c) {
+      localStorage.setItem(VAULT_STORAGE_KEY, code.trim());
+      switchAuthView('unlock');
+      showToast('Sync-Code importiert! Jetzt mit deinem Passwort entsperren.');
+    } else {
+      alert('Ungültiger Sync-Code.');
+    }
+  } catch {
+    alert('Ungültiges Format.');
+  }
 }
 
 function restoreAdminSession() {
@@ -320,11 +613,20 @@ function activateAdminUI() {
 function logoutAdmin() {
   isAdmin = false;
   ghConfig = null;
+  showAllAdmin = false;
+  const toggle = document.getElementById('showAllToggle');
+  if (toggle) toggle.checked = false;
   sessionStorage.removeItem('mw_gh_cfg');
   document.body.classList.remove('is-admin');
   document.getElementById('adminBar').classList.add('hidden');
   document.getElementById('adminLoginBtn').classList.remove('hidden');
+  applyVisibilityFilter();
   showToast('Abgemeldet');
+}
+
+function toggleShowAll(checked) {
+  showAllAdmin = checked;
+  applyVisibilityFilter();
 }
 
 function attachAdminDrag(el, nodeObj) {
@@ -345,14 +647,20 @@ function attachAdminDrag(el, nodeObj) {
     el.style.left = nodeObj.x + 'px';
     el.style.top = nodeObj.y + 'px';
     drawEdges(new Map(appData.nodes.map(n => [n.id, n])));
+    applyVisibilityFilter();
   });
   window.addEventListener('mouseup', () => { dragging = false; });
+}
+
+function toggleParentSelectVisibility() {
+  const lvl = document.getElementById('ed-level').value;
+  document.getElementById('ed-parent-wrap').classList.toggle('hidden', lvl === '1');
 }
 
 function openNodeEditor(nodeId) {
   const parentSelect = document.getElementById('ed-parent');
   parentSelect.innerHTML = appData.nodes
-    .filter(n => n.level <= 2 || n.id !== nodeId)
+    .filter(n => n.id !== nodeId)
     .map(n => `<option value="${n.id}">[Ebene ${n.level}] ${n.title}</option>`)
     .join('');
 
@@ -366,10 +674,11 @@ function openNodeEditor(nodeId) {
     document.getElementById('ed-heading').textContent = 'Baustein bearbeiten';
     document.getElementById('ed-id').value = n.id;
     document.getElementById('ed-title').value = n.title;
-    document.getElementById('ed-level').value = String(n.level === 1 ? 2 : n.level);
+    // Ebene exakt beibehalten (auch Ebene 1 bleibt Ebene 1 -> Kreisform!)
+    document.getElementById('ed-level').value = String(n.level);
     parentSelect.value = n.parentId || '';
     document.getElementById('ed-text').value = n.text || '';
-    document.getElementById('ed-delete-btn').classList.remove('hidden');
+    document.getElementById('ed-delete-btn').classList.toggle('hidden', n.level === 1);
 
     (n.media || []).forEach(m => {
       if (m.type === 'ggb') addMediaRow('ggb', m.label, m.ggbId || m.url || '');
@@ -379,10 +688,13 @@ function openNodeEditor(nodeId) {
     document.getElementById('ed-heading').textContent = 'Neuen Baustein anlegen';
     document.getElementById('ed-id').value = '';
     document.getElementById('ed-title').value = '';
-    document.getElementById('ed-level').value = '3';
+    document.getElementById('ed-level').value = activeTopicId ? '3' : '2';
+    if (activeTopicId) parentSelect.value = activeTopicId;
+    else if (activeDomainId) parentSelect.value = activeDomainId;
     document.getElementById('ed-text').value = '';
     document.getElementById('ed-delete-btn').classList.add('hidden');
   }
+  toggleParentSelectVisibility();
   document.getElementById('editorModal').classList.add('open');
 }
 
@@ -405,7 +717,7 @@ function saveNodeFromEditor(e) {
   const id = document.getElementById('ed-id').value;
   const title = document.getElementById('ed-title').value.trim();
   const level = parseInt(document.getElementById('ed-level').value, 10);
-  const parentId = document.getElementById('ed-parent').value;
+  const parentId = level === 1 ? null : document.getElementById('ed-parent').value;
   const text = document.getElementById('ed-text').value;
 
   const media = [];
@@ -416,7 +728,7 @@ function saveNodeFromEditor(e) {
     media.push({ type: r.dataset.type, label: r.querySelector('.m-label').value.trim(), url: r.querySelector('.m-val').value.trim() });
   });
 
-  const parentNode = appData.nodes.find(n => n.id === parentId);
+  const parentNode = parentId ? appData.nodes.find(n => n.id === parentId) : null;
   if (id) {
     const existing = appData.nodes.find(n => n.id === id);
     existing.title = title;
@@ -424,7 +736,12 @@ function saveNodeFromEditor(e) {
     existing.parentId = parentId;
     existing.text = text;
     existing.media = media;
-    if (parentNode) { existing.color = parentNode.color; existing.domain = parentNode.domain; }
+    if (level === 1) {
+      existing.domain = title;
+    } else if (parentNode) {
+      existing.color = parentNode.color;
+      existing.domain = parentNode.domain;
+    }
   } else {
     const newId = 'node-' + Date.now();
     appData.titleToId[title] = newId;
@@ -432,7 +749,7 @@ function saveNodeFromEditor(e) {
       id: newId,
       level,
       parentId,
-      domain: parentNode ? parentNode.domain : 'Algebra',
+      domain: level === 1 ? title : (parentNode ? parentNode.domain : 'Algebra'),
       title,
       text,
       x: parentNode ? parentNode.x + 260 : 0,
@@ -442,9 +759,10 @@ function saveNodeFromEditor(e) {
     });
   }
 
+  buildDomainNav();
   renderAll();
   closeModal('editorModal');
-  showToast('Änderung lokal übernommen – jetzt „Auf GitHub speichern“ klicken');
+  showToast('Änderung übernommen – mit „Auf GitHub speichern“ sichern');
 }
 
 function deleteCurrentNode() {
@@ -502,14 +820,6 @@ async function saveToGitHub() {
     btn.textContent = 'Auf GitHub speichern';
     btn.disabled = false;
   }
-}
-
-function downloadJsonBackup() {
-  const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'nodes.json';
-  a.click();
 }
 
 function showToast(msg) {
