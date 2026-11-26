@@ -2,17 +2,84 @@ let appData = { titleToId: {}, nodes: [] };
 let scale = 0.34, panX = 0, panY = 0;
 let activeDomainId = null;
 let activeTopicId = null;
+let maxGradeFilter = null; // null = Alle (5-Q2), sonst 5..13
 let showAllAdmin = false;
 
 let isAdmin = false;
 let ghConfig = null;
 
 const DOMAIN_IDS = new Set(['arithmetik-algebra', 'geometrie', 'analysis', 'stochastik']);
+const DOMAIN_PALETTES = {
+  'arithmetik-algebra': ['#58C4DD', '#479FE3', '#687EE8', '#8D6CE8'],
+  'geometrie':          ['#3CC4B2', '#52C88A', '#83C167', '#ACD654'],
+  'analysis':           ['#F4D345', '#F2A33C', '#EE7747', '#FC6255'],
+  'stochastik':         ['#9A72AC', '#B96BA8', '#D56A95', '#E87580']
+};
+
 const VAULT_STORAGE_KEY = 'mw_encrypted_vault_v1';
 const viewport = document.getElementById('viewport');
 const world = document.getElementById('world');
 const nodesLayer = document.getElementById('nodesLayer');
 const edgesSvg = document.getElementById('edges');
+
+function formatGradeBadge(g) {
+  if (!g) return 'ab Kl. 5';
+  if (g === 11) return 'ab EF';
+  if (g === 12) return 'ab Q1';
+  if (g === 13) return 'ab Q2';
+  return `ab Kl. ${g}`;
+}
+
+function getDomainRootId(node, nodeMap) {
+  let curr = node;
+  const seen = new Set();
+  while (curr && curr.parentId && nodeMap.has(curr.parentId) && !seen.has(curr.id)) {
+    seen.add(curr.id);
+    curr = nodeMap.get(curr.parentId);
+  }
+  return curr ? curr.id : 'arithmetik-algebra';
+}
+
+function computeDepth(node, nodeMap) {
+  let d = 1;
+  let curr = node;
+  const seen = new Set();
+  while (curr && curr.parentId && nodeMap.has(curr.parentId) && !seen.has(curr.id)) {
+    seen.add(curr.id);
+    d += 1;
+    curr = nodeMap.get(curr.parentId);
+  }
+  return d;
+}
+
+function enrichNodeHierarchyAndColors() {
+  const nodeMap = new Map(appData.nodes.map(n => [n.id, n]));
+  appData.nodes.forEach(n => {
+    if (DOMAIN_IDS.has(n.id) || n.parentId === null) {
+      n.level = 1;
+      n.parentId = null;
+    }
+    if (typeof n.minGrade !== 'number') {
+      n.minGrade = n.level === 1 ? 5 : 7;
+    }
+  });
+
+  appData.nodes.forEach(n => {
+    const depth = computeDepth(n, nodeMap);
+    n.depth = depth;
+    const rootId = getDomainRootId(n, nodeMap);
+    const palette = DOMAIN_PALETTES[rootId] || DOMAIN_PALETTES['arithmetik-algebra'];
+    const dIdx = Math.min(palette.length - 1, Math.max(0, depth - 1));
+    const pIdx = Math.max(0, dIdx - 1);
+    n.color = palette[dIdx];
+    n.parentColor = palette[pIdx];
+  });
+}
+
+function isNodeAllowedByGrade(node) {
+  if (maxGradeFilter === null) return true;
+  return (node.minGrade || 5) <= maxGradeFilter;
+}
 
 async function init() {
   try {
@@ -22,12 +89,7 @@ async function init() {
     if (parsed && Array.isArray(parsed.nodes)) {
       appData = parsed;
       appData.titleToId = appData.titleToId || {};
-      appData.nodes.forEach(n => {
-        if (DOMAIN_IDS.has(n.id) || n.parentId === null) {
-          n.level = 1;
-          n.parentId = null;
-        }
-      });
+      enrichNodeHierarchyAndColors();
     }
   } catch (err) {
     showToast('Hinweis: data/nodes.json konnte nicht geladen werden (' + err.message + ')');
@@ -40,15 +102,51 @@ async function init() {
   focusOverview();
 }
 
+function setGradeFilter(val) {
+  maxGradeFilter = val === 'all' ? null : parseInt(val, 10);
+  const wrap = document.querySelector('.grade-filter-wrap');
+  if (wrap) wrap.classList.toggle('active-filter', maxGradeFilter !== null);
+
+  // Wenn das aktuell gewählte Hauptgebiet oder Thema erst in einer höheren Stufe vorkommt, zurückspringen
+  if (activeTopicId) {
+    const top = appData.nodes.find(n => n.id === activeTopicId);
+    if (top && !isNodeAllowedByGrade(top)) {
+      activeTopicId = null;
+      const dom = appData.nodes.find(n => n.id === activeDomainId);
+      if (dom && isNodeAllowedByGrade(dom)) {
+        selectDomain(dom.id);
+      } else {
+        focusOverview();
+      }
+      buildDomainNav();
+      return;
+    }
+  }
+  if (activeDomainId) {
+    const dom = appData.nodes.find(n => n.id === activeDomainId);
+    if (dom && !isNodeAllowedByGrade(dom)) {
+      focusOverview();
+      buildDomainNav();
+      return;
+    }
+  }
+
+  buildDomainNav();
+  applyVisibilityFilter();
+  if (maxGradeFilter !== null) {
+    showToast(`Filter aktiv: Lerninhalte bis ${val === '11' ? 'EF' : val === '12' ? 'Q1' : val === '13' ? 'Q2' : 'Klasse ' + val}`);
+  }
+}
+
 function buildDomainNav() {
   const nav = document.getElementById('domainNav');
   nav.innerHTML = `<button class="crumb-btn" id="crumb-overview" onclick="focusOverview()">Übersicht</button>`;
-  appData.nodes.filter(n => n.level === 1).forEach(d => {
+  appData.nodes.filter(n => n.level === 1 && isNodeAllowedByGrade(n)).forEach(d => {
     const btn = document.createElement('button');
     btn.className = 'crumb-btn';
     btn.id = 'crumb-' + d.id;
     btn.textContent = d.title;
-    btn.style.borderColor = d.color + '66';
+    btn.style.borderColor = d.color + '77';
     btn.style.color = d.color;
     btn.onclick = () => selectDomain(d.id);
     nav.appendChild(btn);
@@ -89,28 +187,28 @@ function buildBezierPath(x1, y1, x2, y2) {
   const dx = x2 - x1;
   const dy = y2 - y1;
   const cx1 = x1 + dx * 0.45;
-  const cy1 = y1 + dy * 0.1;
+  const cy1 = y1 + dy * 0.08;
   const cx2 = x2 - dx * 0.45;
-  const cy2 = y2 - dy * 0.1;
+  const cy2 = y2 - dy * 0.08;
   return `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`;
 }
 
 function renderAll() {
+  enrichNodeHierarchyAndColors();
   nodesLayer.innerHTML = '';
   const nodeMap = new Map(appData.nodes.map(n => [n.id, n]));
 
   appData.nodes.forEach(n => {
-    const isRootDomain = DOMAIN_IDS.has(n.id) || n.level === 1;
-    if (isRootDomain) n.level = 1;
-
     const el = document.createElement('div');
-    el.className = `node level-${n.level}`;
+    el.className = `node level-${n.level} depth-${n.depth || n.level}`;
     el.id = 'el-' + n.id;
     el.style.left = n.x + 'px';
     el.style.top = n.y + 'px';
     el.style.setProperty('--node-color', n.color || '#58C4DD');
+    el.style.setProperty('--parent-color', n.parentColor || n.color || '#58C4DD');
 
     const editBtn = `<button class="node-edit-btn" onclick="event.stopPropagation(); openNodeEditor('${n.id}')">✎</button>`;
+    const gradeBadge = `<span class="grade-tag">${formatGradeBadge(n.minGrade)}</span>`;
 
     if (n.level === 1) {
       el.innerHTML = `${editBtn}<span class="domain-pill">${n.tag || 'Hauptgebiet'}</span><h2>${n.title}</h2><p>${n.text || ''}</p>`;
@@ -119,7 +217,7 @@ function renderAll() {
       const shortDesc = n.text
         ? n.text.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, '$1').slice(0, 95) + (n.text.length > 95 ? '…' : '')
         : 'Themenbereich erkunden';
-      el.innerHTML = `${editBtn}<span class="domain-badge">${n.domain || ''}</span><h3>${n.title}</h3><p>${shortDesc}</p>`;
+      el.innerHTML = `${editBtn}<div class="card-meta-row"><span class="domain-badge">${n.domain || ''}</span>${gradeBadge}</div><h3>${n.title}</h3><p>${shortDesc}</p>`;
       el.onclick = () => { if (!isAdmin) selectTopic(n.id); };
     } else {
       const isLong = (n.text || '').length > 200;
@@ -132,7 +230,7 @@ function renderAll() {
         chips.push(`<button class="chip expand" onclick="event.stopPropagation(); openFullTextModal('${n.id}')">Mehr lesen</button>`);
       }
       const emptyHint = (!bodyHtml && chips.length === 0) ? `<div class="node-empty-hint">Inhalt folgt</div>` : '';
-      el.innerHTML = `${editBtn}<span class="domain-badge">${n.domain || ''}</span><h4>${n.title}</h4>${emptyHint}<div class="node-body-text">${bodyHtml}</div><div class="chips">${chips.join('')}</div>`;
+      el.innerHTML = `${editBtn}<div class="card-meta-row"><span class="domain-badge">${n.domain || ''}</span>${gradeBadge}</div><h4>${n.title}</h4>${emptyHint}<div class="node-body-text">${bodyHtml}</div><div class="chips">${chips.join('')}</div>`;
     }
 
     el.addEventListener('mouseenter', () => toggleChildFlows(n.id, true));
@@ -148,19 +246,44 @@ function renderAll() {
 
 function drawEdges(nodeMap) {
   edgesSvg.innerHTML = '';
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  edgesSvg.appendChild(defs);
+
   appData.nodes.forEach(n => {
     if (!n.parentId || !nodeMap.has(n.parentId)) return;
     const p = nodeMap.get(n.parentId);
-    const d = buildBezierPath(p.x + 6000, p.y + 6000, n.x + 6000, n.y + 6000);
+    const x1 = p.x + 6000, y1 = p.y + 6000;
+    const x2 = n.x + 6000, y2 = n.y + 6000;
+    const d = buildBezierPath(x1, y1, x2, y2);
+
+    // SVG-Farbverlauf von der Farbe der oberen Ebene zur Farbe der tieferen Ebene
+    const gradId = `grad-${p.id}-${n.id}`;
+    const grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+    grad.setAttribute('id', gradId);
+    grad.setAttribute('gradientUnits', 'userSpaceOnUse');
+    grad.setAttribute('x1', x1);
+    grad.setAttribute('y1', y1);
+    grad.setAttribute('x2', x2);
+    grad.setAttribute('y2', y2);
+
+    const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    stop1.setAttribute('offset', '0%');
+    stop1.setAttribute('stop-color', p.color || '#58C4DD');
+    const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    stop2.setAttribute('offset', '100%');
+    stop2.setAttribute('stop-color', n.color || '#58C4DD');
+    grad.appendChild(stop1);
+    grad.appendChild(stop2);
+    defs.appendChild(grad);
 
     const base = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     base.setAttribute('d', d);
     base.setAttribute('class', 'edge-path');
     base.dataset.from = n.parentId;
     base.dataset.to = n.id;
-    base.setAttribute('stroke', n.color || '#58C4DD');
-    base.setAttribute('stroke-opacity', n.level === 2 ? '0.35' : '0.26');
-    base.setAttribute('stroke-width', n.level === 2 ? '2.4' : '1.8');
+    base.setAttribute('stroke', `url(#${gradId})`);
+    base.setAttribute('stroke-opacity', n.level === 2 ? '0.45' : '0.38');
+    base.setAttribute('stroke-width', n.level === 2 ? '2.6' : '2.1');
     edgesSvg.appendChild(base);
 
     const flow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -170,7 +293,7 @@ function drawEdges(nodeMap) {
     flow.dataset.to = n.id;
     flow.setAttribute('data-parent', n.parentId);
     flow.setAttribute('stroke', n.color || '#58C4DD');
-    flow.setAttribute('stroke-width', n.level === 2 ? '3' : '2.2');
+    flow.setAttribute('stroke-width', n.level === 2 ? '3.2' : '2.5');
     edgesSvg.appendChild(flow);
   });
 }
@@ -216,7 +339,7 @@ function getLevel1Ancestor(nodeId) {
 
 function findNearestNodeAtLevel(level, worldX, worldY) {
   let best = null, bestDist = Infinity;
-  appData.nodes.filter(n => n.level === level).forEach(n => {
+  appData.nodes.filter(n => n.level === level && isNodeAllowedByGrade(n)).forEach(n => {
     const d = Math.hypot(n.x - worldX, n.y - worldY);
     if (d < bestDist) { bestDist = d; best = n; }
   });
@@ -228,29 +351,33 @@ function applyVisibilityFilter() {
   const visibleIds = new Set();
 
   if (showAllAdmin && isAdmin) {
-    appData.nodes.forEach(n => visibleIds.add(n.id));
+    appData.nodes.forEach(n => {
+      if (isNodeAllowedByGrade(n)) visibleIds.add(n.id);
+    });
   } else if (mode === 'macro') {
-    appData.nodes.filter(n => n.level === 1).forEach(n => visibleIds.add(n.id));
+    appData.nodes.filter(n => n.level === 1 && isNodeAllowedByGrade(n)).forEach(n => visibleIds.add(n.id));
   } else if (mode === 'meso') {
     const centerWorldX = -panX / scale;
     const centerWorldY = -panY / scale;
-    const domain = (activeDomainId && appData.nodes.find(n => n.id === activeDomainId))
+    const domain = (activeDomainId && appData.nodes.find(n => n.id === activeDomainId && isNodeAllowedByGrade(n)))
       || findNearestNodeAtLevel(1, centerWorldX, centerWorldY);
     if (domain) {
       activeDomainId = domain.id;
-      appData.nodes.filter(n => n.level === 2 && n.parentId === domain.id).forEach(n => visibleIds.add(n.id));
+      appData.nodes
+        .filter(n => n.level === 2 && n.parentId === domain.id && isNodeAllowedByGrade(n))
+        .forEach(n => visibleIds.add(n.id));
     }
   } else if (mode === 'micro') {
     const centerWorldX = -panX / scale;
     const centerWorldY = -panY / scale;
-    const topic = (activeTopicId && appData.nodes.find(n => n.id === activeTopicId))
+    const topic = (activeTopicId && appData.nodes.find(n => n.id === activeTopicId && isNodeAllowedByGrade(n)))
       || findNearestNodeAtLevel(2, centerWorldX, centerWorldY);
     if (topic) {
       activeTopicId = topic.id;
       activeDomainId = topic.parentId;
       visibleIds.add(topic.id);
       appData.nodes.forEach(n => {
-        if (n.level === 3 && getAncestors(n.id).has(topic.id)) {
+        if (n.level === 3 && getAncestors(n.id).has(topic.id) && isNodeAllowedByGrade(n)) {
           visibleIds.add(n.id);
         }
       });
@@ -290,11 +417,14 @@ function updateHudContext() {
     if (ov) ov.classList.add('active');
   } else {
     const dom = appData.nodes.find(n => n.id === activeDomainId);
-    const col = dom ? dom.color : '#58C4DD';
+    const top = appData.nodes.find(n => n.id === activeTopicId);
+    const activeNode = (mode === 'micro' && top) ? top : dom;
+    const col = activeNode ? activeNode.color : '#58C4DD';
+
     brandDot.style.background = col;
     brandDot.style.boxShadow = `0 0 12px ${col}`;
     indicator.style.color = col;
-    indicator.style.borderColor = col + '55';
+    indicator.style.borderColor = col + '66';
 
     if (dom) {
       const cb = document.getElementById('crumb-' + dom.id);
@@ -304,14 +434,12 @@ function updateHudContext() {
     if (mode === 'meso') {
       indicator.textContent = dom ? `${dom.title} · Themengebiete` : 'Themengebiete';
     } else {
-      const top = appData.nodes.find(n => n.id === activeTopicId);
       indicator.textContent = top ? `${dom ? dom.title + ' › ' : ''}${top.title}` : 'Lernbausteine';
     }
   }
 }
 
 function syncInfiniteGrid() {
-  // Synchronisiert das Manim-Koordinatengitter unendlich mit Verschiebung & Zoom-Faktor
   const major = Math.max(24, 160 * scale);
   const minor = major / 5;
   const cx = viewport.clientWidth / 2 + panX;
@@ -325,14 +453,13 @@ function updateTransform() {
   syncInfiniteGrid();
 
   let mode = 'macro';
-  if (scale >= 0.56 && scale < 0.92) mode = 'meso';
-  else if (scale >= 0.92) mode = 'micro';
+  if (scale >= 0.56 && scale < 0.90) mode = 'meso';
+  else if (scale >= 0.90) mode = 'micro';
   document.body.setAttribute('data-zoom', mode);
   applyVisibilityFilter();
 }
 
 function getInitialOverviewScale() {
-  // Passt den Start-Zoom dynamisch an kleinere Tablet-Bildschirme an
   const minDim = Math.min(window.innerWidth, window.innerHeight);
   return minDim < 850 ? 0.25 : 0.34;
 }
@@ -363,12 +490,21 @@ function selectTopic(topicId) {
   if (!t) return;
   activeTopicId = t.id;
   activeDomainId = t.parentId;
-  focusAt(t.x, t.y, 0.96);
+  // Zentriert leicht rechts vom Themen-Anker, damit das Links-nach-Rechts-Baumraster optimal im Bild liegt
+  focusAt(t.x + 280, t.y, 0.95);
 }
 
 function jumpToNode(nodeId) {
   const n = appData.nodes.find(item => item.id === nodeId);
   if (!n) return;
+  if (!isNodeAllowedByGrade(n)) {
+    maxGradeFilter = null;
+    const sel = document.getElementById('gradeSelect');
+    if (sel) sel.value = 'all';
+    const wrap = document.querySelector('.grade-filter-wrap');
+    if (wrap) wrap.classList.remove('active-filter');
+    buildDomainNav();
+  }
   if (n.level === 1) {
     selectDomain(n.id);
   } else if (n.level === 2) {
@@ -398,7 +534,6 @@ function zoomAroundScreenPoint(factor, screenX, screenY) {
   const offsetX = screenX - halfW;
   const offsetY = screenY - halfH;
 
-  // Weltkoordinate unter dem Finger/Cursor beibehalten
   const worldX = (offsetX - panX) / scale;
   const worldY = (offsetY - panY) / scale;
 
@@ -408,7 +543,7 @@ function zoomAroundScreenPoint(factor, screenX, screenY) {
     const nearestDom = findNearestNodeAtLevel(1, centerWorldX, centerWorldY);
     if (nearestDom) activeDomainId = nearestDom.id;
   }
-  if (scale < 0.92 && nextScale >= 0.92 && !activeTopicId) {
+  if (scale < 0.90 && nextScale >= 0.90 && !activeTopicId) {
     const nearestTop = findNearestNodeAtLevel(2, centerWorldX, centerWorldY);
     if (nearestTop) activeTopicId = nearestTop.id;
   }
@@ -424,7 +559,7 @@ function stepZoom(factor) {
 }
 
 // =========================================================================
-// MAUS- UND TOUCH-NAVIGATION (Pan + Pinch-to-Zoom für Tablet & Laptop)
+// MAUS- UND TOUCH-NAVIGATION
 // =========================================================================
 viewport.addEventListener('wheel', e => {
   e.preventDefault();
@@ -451,8 +586,7 @@ window.addEventListener('mouseup', () => {
   world.classList.remove('dragging');
 });
 
-// Touch-Gesten: 1 Finger = Verschieben, 2 Finger = Pinch-Zoom
-let touchMode = null; // 'pan' | 'pinch'
+let touchMode = null;
 let lastTouchX = 0, lastTouchY = 0;
 let lastPinchDist = 0;
 
@@ -461,10 +595,7 @@ function getTouchDistance(t1, t2) {
 }
 
 function getTouchMidpoint(t1, t2) {
-  return {
-    x: (t1.clientX + t2.clientX) / 2,
-    y: (t1.clientY + t2.clientY) / 2
-  };
+  return { x: (t1.clientX + t2.clientX) / 2, y: (t1.clientY + t2.clientY) / 2 };
 }
 
 viewport.addEventListener('touchstart', e => {
@@ -531,11 +662,12 @@ function setupSearch() {
     const q = input.value.trim().toLowerCase();
     if (!q) { box.classList.remove('open'); return; }
     const hits = appData.nodes.filter(n =>
-      n.title.toLowerCase().includes(q) || (n.text && n.text.toLowerCase().includes(q))
+      isNodeAllowedByGrade(n) &&
+      (n.title.toLowerCase().includes(q) || (n.text && n.text.toLowerCase().includes(q)))
     ).slice(0, 12);
     box.innerHTML = hits.map(h =>
       `<div class="search-item" onclick="jumpToNode('${h.id}'); document.getElementById('searchResults').classList.remove('open');">
-        <span>${h.title}</span><span class="search-domain" style="color:${h.color || '#94a3b8'}">${h.domain || ''}</span>
+        <span>${h.title}</span><span class="search-domain" style="color:${h.color || '#94a3b8'}">${h.domain || ''} · ${formatGradeBadge(h.minGrade)}</span>
       </div>`
     ).join('');
     box.classList.toggle('open', hits.length > 0);
@@ -571,7 +703,7 @@ function openMediaModal(nodeId, mediaIdx) {
 function openFullTextModal(nodeId) {
   const n = appData.nodes.find(item => item.id === nodeId);
   if (!n) return;
-  document.getElementById('m-badge').textContent = n.domain || 'Lernbaustein';
+  document.getElementById('m-badge').textContent = `${n.domain || 'Lernbaustein'} · ${formatGradeBadge(n.minGrade)}`;
   document.getElementById('m-title').textContent = n.title;
   const body = document.getElementById('m-body');
   body.innerHTML = `<div class="node-body-text" style="padding:24px; width:100%; font-size:0.95rem;">${formatWikiText(n.text, false)}</div>`;
@@ -746,6 +878,7 @@ function toggleShowAll(checked) {
   applyVisibilityFilter();
 }
 
+// Admin-Helfer: Aktives Cluster hierarchisch von links nach rechts im Baumraster ausrichten
 function autoArrangeActiveCluster() {
   if (!activeTopicId) {
     showToast('Bitte zuerst in ein Themengebiet (Ebene 3) hineinzoomen');
@@ -754,32 +887,51 @@ function autoArrangeActiveCluster() {
   const topic = appData.nodes.find(n => n.id === activeTopicId);
   if (!topic) return;
 
-  const clusterCards = appData.nodes.filter(n => n.level === 3 && getAncestors(n.id).has(topic.id));
-  const leftWing = clusterCards.filter((_, i) => i % 2 === 0);
-  const rightWing = clusterCards.filter((_, i) => i % 2 === 1);
-  const colW = 365, rowH = 250, maxRows = 4;
-
-  rightWing.forEach((card, i) => {
-    const col = Math.floor(i / maxRows);
-    const row = i % maxRows;
-    const rowsInCol = Math.min(maxRows, rightWing.length - col * maxRows);
-    card.x = Math.round(topic.x + 380 + col * colW);
-    card.y = Math.round(topic.y + (row - (rowsInCol - 1) / 2) * rowH);
+  const kidsMap = new Map(appData.nodes.map(n => [n.id, []]));
+  appData.nodes.forEach(n => {
+    if (n.parentId && kidsMap.has(n.parentId) && isNodeAllowedByGrade(n)) {
+      kidsMap.get(n.parentId).push(n);
+    }
   });
+  kidsMap.forEach(arr => arr.sort((a, b) => (a.minGrade || 5) - (b.minGrade || 5) || a.title.localeCompare(b.title)));
 
-  leftWing.forEach((card, i) => {
-    const col = Math.floor(i / maxRows);
-    const row = i % maxRows;
-    const rowsInCol = Math.min(maxRows, leftWing.length - col * maxRows);
-    card.x = Math.round(topic.x - 380 - col * colW);
-    card.y = Math.round(topic.y + (row - (rowsInCol - 1) / 2) * rowH);
+  function countLeaves(nid) {
+    const k = kidsMap.get(nid) || [];
+    return k.length === 0 ? 1 : k.reduce((sum, ch) => sum + countLeaves(ch.id), 0);
+  }
+
+  const directKids = kidsMap.get(topic.id) || [];
+  if (directKids.length === 0) return;
+
+  const rowUnit = 235;
+  const colStep = 385;
+  const totalUnits = directKids.reduce((s, dk) => s + countLeaves(dk.id), 0);
+  let curY = topic.y - ((totalUnits - 1) * rowUnit) / 2;
+
+  function layoutSubtree(curr, depthCol, yCursor) {
+    const kids = kidsMap.get(curr.id) || [];
+    const span = countLeaves(curr.id);
+    curr.x = Math.round(topic.x + depthCol * colStep);
+    curr.y = Math.round(yCursor + ((span - 1) * rowUnit) / 2);
+    let childY = yCursor;
+    kids.forEach(k => {
+      const kSpan = countLeaves(k.id);
+      layoutSubtree(k, depthCol + 1, childY);
+      childY += kSpan * rowUnit;
+    });
+  }
+
+  directKids.forEach(dk => {
+    const span = countLeaves(dk.id);
+    layoutSubtree(dk, 1, curY);
+    curY += span * rowUnit;
   });
 
   renderAll();
-  showToast('Cluster sauber ausgerichtet');
+  showToast('Cluster hierarchisch ausgerichtet');
 }
 
-// Drag & Drop für Bausteine im Admin-Modus (Maus UND Touch/Tablet!)
+// Drag & Drop für Bausteine im Admin-Modus
 function attachAdminDrag(el, nodeObj) {
   let dragging = false, startMouseX = 0, startMouseY = 0, origX = 0, origY = 0;
 
@@ -808,7 +960,6 @@ function attachAdminDrag(el, nodeObj) {
     el.classList.remove('node-dragging');
   }
 
-  // Maus
   el.addEventListener('mousedown', e => {
     if (!isAdmin || e.target.closest('button')) return;
     e.stopPropagation();
@@ -817,7 +968,6 @@ function attachAdminDrag(el, nodeObj) {
   window.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
   window.addEventListener('mouseup', endDrag);
 
-  // Touch (Tablet-Stift & Finger)
   el.addEventListener('touchstart', e => {
     if (!isAdmin || e.target.closest('button') || e.touches.length !== 1) return;
     e.stopPropagation();
@@ -854,6 +1004,7 @@ function openNodeEditor(nodeId) {
 
   const levelWrap = document.getElementById('ed-level-wrap');
   const levelSelect = document.getElementById('ed-level');
+  const gradeSelect = document.getElementById('ed-grade');
 
   if (nodeId) {
     const n = appData.nodes.find(item => item.id === nodeId);
@@ -865,6 +1016,7 @@ function openNodeEditor(nodeId) {
     document.getElementById('ed-title').value = n.title;
     levelSelect.value = String(n.level);
     levelWrap.classList.toggle('hidden', isRootDomain);
+    gradeSelect.value = String(n.minGrade || 5);
     parentSelect.value = n.parentId || '';
     document.getElementById('ed-text').value = n.text || '';
     document.getElementById('ed-delete-btn').classList.toggle('hidden', isRootDomain);
@@ -879,6 +1031,7 @@ function openNodeEditor(nodeId) {
     document.getElementById('ed-title').value = '';
     levelWrap.classList.remove('hidden');
     levelSelect.value = activeTopicId ? '3' : '2';
+    gradeSelect.value = String(maxGradeFilter || 7);
     if (activeTopicId) parentSelect.value = activeTopicId;
     else if (activeDomainId) parentSelect.value = activeDomainId;
     document.getElementById('ed-text').value = '';
@@ -909,6 +1062,7 @@ function saveNodeFromEditor(e) {
   const isRootDomain = DOMAIN_IDS.has(id);
   const parsedLevel = parseInt(document.getElementById('ed-level').value, 10);
   const level = isRootDomain ? 1 : (Number.isNaN(parsedLevel) ? 3 : parsedLevel);
+  const minGrade = parseInt(document.getElementById('ed-grade').value, 10) || 5;
   const parentId = level === 1 ? null : document.getElementById('ed-parent').value;
   const text = document.getElementById('ed-text').value;
 
@@ -925,13 +1079,13 @@ function saveNodeFromEditor(e) {
     const existing = appData.nodes.find(n => n.id === id);
     existing.title = title;
     existing.level = level;
+    existing.minGrade = minGrade;
     existing.parentId = parentId;
     existing.text = text;
     existing.media = media;
     if (level === 1) {
       existing.domain = title;
     } else if (parentNode) {
-      existing.color = parentNode.color;
       existing.domain = parentNode.domain;
     }
   } else {
@@ -940,11 +1094,12 @@ function saveNodeFromEditor(e) {
     appData.nodes.push({
       id: newId,
       level,
+      minGrade,
       parentId,
       domain: level === 1 ? title : (parentNode ? parentNode.domain : 'Algebra'),
       title,
       text,
-      x: parentNode ? parentNode.x + 380 : 0,
+      x: parentNode ? parentNode.x + 385 : 0,
       y: parentNode ? parentNode.y : 0,
       color: parentNode ? parentNode.color : '#58C4DD',
       media

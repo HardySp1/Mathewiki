@@ -1,5 +1,5 @@
 {
-  "version": "3.0.0",
+  "version": "5.0.0",
   "titleToId": {
     "Abbildungen": "abbildungen",
     "Ableitungsregeln (Potenz-, Summen-, Faktorregel)": "ableitungsregeln-potenz-summen-faktorregel",
@@ -197,10 +197,13 @@
       "title": "Algebra",
       "fullTitle": "Arithmetik/Algebra",
       "text": "Zahlenbereiche, Terme, Gleichungen & Rechengesetze",
-      "x": -1100,
-      "y": -780,
+      "x": -1150,
+      "y": -820,
       "color": "#58C4DD",
-      "media": []
+      "media": [],
+      "depth": 1,
+      "minGrade": 5,
+      "parentColor": "#58C4DD"
     },
     {
       "id": "grundrechenarten-und-gesetze",
@@ -209,10 +212,13 @@
       "domain": "Algebra",
       "title": "Grundrechenarten und Gesetze",
       "text": "Die Grundrechenarten umfassen [[Addition]] $$(+)$$, [[Subtraktion]] $$(-)$$, [[Multiplikation]] $$(\\cdot)$$ und [[Division]] $$(:)$$ oder $$(/ )$$. Diese werden auf alle [[Zahlenbereiche]] angewendet.",
-      "x": -1100,
-      "y": -1240,
-      "color": "#58C4DD",
-      "media": []
+      "x": -1365,
+      "y": -935,
+      "color": "#479FE3",
+      "media": [],
+      "depth": 2,
+      "minGrade": 5,
+      "parentColor": "#58C4DD"
     },
     {
       "id": "addition",
@@ -221,10 +227,13 @@
       "domain": "Algebra",
       "title": "Addition",
       "text": "",
-      "x": -720,
-      "y": -1365,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -1758,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#479FE3"
     },
     {
       "id": "assoziativgesetz",
@@ -233,10 +242,13 @@
       "domain": "Algebra",
       "title": "Assoziativgesetz",
       "text": "Assoziativgesetz (Verbindungsgesetz): \n\nDie Gruppierung der Operanden ändert das Ergebnis bei Addition und Multiplikation nicht. \n\nFür Addition: $$(a + b) + c = a + (b + c)$$ \n\nFür Multiplikation: $$(a \\cdot b) \\cdot c = a \\cdot (b \\cdot c)$$.",
-      "x": -1480,
-      "y": -1615,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -1522,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#479FE3"
     },
     {
       "id": "distributivgesetz",
@@ -245,10 +257,13 @@
       "domain": "Algebra",
       "title": "Distributivgesetz",
       "text": "Distributivgesetz (Verteilungsgesetz): \n\nEs verbindet Multiplikation und Addition/Subtraktion. $$a \\cdot (b + c) = a \\cdot b + a \\cdot c$$.",
-      "x": -720,
-      "y": -1615,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -1288,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#479FE3"
     },
     {
       "id": "division",
@@ -257,10 +272,13 @@
       "domain": "Algebra",
       "title": "Division",
       "text": "",
-      "x": -1480,
-      "y": -1115,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -1052,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#479FE3"
     },
     {
       "id": "kommutativgesetz",
@@ -269,10 +287,13 @@
       "domain": "Algebra",
       "title": "Kommutativgesetz",
       "text": "Kommutativgesetz (Vertauschungsgesetz):\n\nDie Reihenfolge der Operanden ändert das Ergebnis bei Addition und Multiplikation nicht.\n\nFür Addition: $$a + b = b + a$$ \n\nFür Multiplikation: $$a \\cdot b = b \\cdot a$$",
-      "x": -1480,
-      "y": -1365,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -818,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#479FE3"
     },
     {
       "id": "multiplikation",
@@ -281,10 +302,13 @@
       "domain": "Algebra",
       "title": "Multiplikation",
       "text": "",
-      "x": -720,
-      "y": -1115,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -582,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#479FE3"
     },
     {
       "id": "schriftliche-division",
@@ -293,10 +317,13 @@
       "domain": "Algebra",
       "title": "Schriftliche Division",
       "text": "",
-      "x": -1480,
-      "y": -865,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -348,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#479FE3"
     },
     {
       "id": "subtraktion",
@@ -305,10 +332,13 @@
       "domain": "Algebra",
       "title": "Subtraktion",
       "text": "",
-      "x": -720,
-      "y": -865,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -112,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#479FE3"
     },
     {
       "id": "potenzen-wurzeln-logarithmen",
@@ -317,10 +347,13 @@
       "domain": "Algebra",
       "title": "Potenzen, Wurzeln, Logarithmen",
       "text": "",
-      "x": -1100,
-      "y": -320,
-      "color": "#58C4DD",
-      "media": []
+      "x": -935,
+      "y": -935,
+      "color": "#479FE3",
+      "media": [],
+      "depth": 2,
+      "minGrade": 5,
+      "parentColor": "#58C4DD"
     },
     {
       "id": "logarithmieren-als-umkehrung-des-potenzierens",
@@ -329,10 +362,13 @@
       "domain": "Algebra",
       "title": "Logarithmieren als Umkehrung des Potenzierens",
       "text": "",
-      "x": -1480,
-      "y": -570,
-      "color": "#58C4DD",
-      "media": []
+      "x": -550,
+      "y": -348,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 10,
+      "parentColor": "#479FE3"
     },
     {
       "id": "potenzgesetze",
@@ -341,10 +377,13 @@
       "domain": "Algebra",
       "title": "Potenzgesetze",
       "text": "",
-      "x": -720,
-      "y": -570,
-      "color": "#58C4DD",
-      "media": []
+      "x": -550,
+      "y": -582,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 9,
+      "parentColor": "#479FE3"
     },
     {
       "id": "potenzschreibweise",
@@ -353,10 +392,13 @@
       "domain": "Algebra",
       "title": "Potenzschreibweise",
       "text": "",
-      "x": -1480,
-      "y": -320,
-      "color": "#58C4DD",
-      "media": []
+      "x": -550,
+      "y": -1522,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#479FE3"
     },
     {
       "id": "radizieren-als-umkehrung-des-potenzierens",
@@ -365,10 +407,13 @@
       "domain": "Algebra",
       "title": "Radizieren als Umkehrung des Potenzierens",
       "text": "",
-      "x": -720,
-      "y": -320,
-      "color": "#58C4DD",
-      "media": []
+      "x": -550,
+      "y": -1052,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#479FE3"
     },
     {
       "id": "wurzelgesetze",
@@ -377,10 +422,13 @@
       "domain": "Algebra",
       "title": "Wurzelgesetze",
       "text": "",
-      "x": -1480,
-      "y": -70,
-      "color": "#58C4DD",
-      "media": []
+      "x": -550,
+      "y": -818,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#479FE3"
     },
     {
       "id": "zehnerpotenzschreibweise",
@@ -389,10 +437,13 @@
       "domain": "Algebra",
       "title": "Zehnerpotenzschreibweise",
       "text": "",
-      "x": -720,
-      "y": -70,
-      "color": "#58C4DD",
-      "media": []
+      "x": -550,
+      "y": -1288,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 6,
+      "parentColor": "#479FE3"
     },
     {
       "id": "terme-und-gleichungen",
@@ -401,10 +452,13 @@
       "domain": "Algebra",
       "title": "Terme und Gleichungen",
       "text": "",
-      "x": -1720,
-      "y": -780,
-      "color": "#58C4DD",
-      "media": []
+      "x": -1365,
+      "y": -705,
+      "color": "#479FE3",
+      "media": [],
+      "depth": 2,
+      "minGrade": 5,
+      "parentColor": "#58C4DD"
     },
     {
       "id": "biquadratische-gleichungen",
@@ -413,10 +467,13 @@
       "domain": "Algebra",
       "title": "Biquadratische Gleichungen",
       "text": "",
-      "x": -1340,
-      "y": -905,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": 0,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 10,
+      "parentColor": "#479FE3"
     },
     {
       "id": "bruchterme",
@@ -425,10 +482,13 @@
       "domain": "Algebra",
       "title": "Bruchterme",
       "text": "",
-      "x": -2100,
-      "y": -655,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -705,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#479FE3"
     },
     {
       "id": "exponentialgleichungen",
@@ -437,10 +497,13 @@
       "domain": "Algebra",
       "title": "Exponentialgleichungen",
       "text": "Gleichungen, bei denen die Variable im Exponenten steht, z.B. $$b^x = c$$. Lösungsverfahren umfassen systematisches Probieren oder Logarithmieren.",
-      "x": -2100,
-      "y": -1155,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": 235,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 10,
+      "parentColor": "#479FE3"
     },
     {
       "id": "lineare-gleichungen",
@@ -449,10 +512,13 @@
       "domain": "Algebra",
       "title": "Lineare Gleichungen",
       "text": "",
-      "x": -1340,
-      "y": -655,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -1410,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#479FE3"
     },
     {
       "id": "lineare-gleichungssysteme",
@@ -461,10 +527,13 @@
       "domain": "Algebra",
       "title": "Lineare Gleichungssysteme",
       "text": "",
-      "x": -2100,
-      "y": -405,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -470,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#479FE3"
     },
     {
       "id": "quadratische-gleichungen",
@@ -473,10 +542,13 @@
       "domain": "Algebra",
       "title": "Quadratische Gleichungen",
       "text": "",
-      "x": -1340,
-      "y": -405,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -235,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 9,
+      "parentColor": "#479FE3"
     },
     {
       "id": "rechenterme",
@@ -485,10 +557,13 @@
       "domain": "Algebra",
       "title": "Rechenterme",
       "text": "",
-      "x": -2465,
-      "y": -780,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -1645,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#479FE3"
     },
     {
       "id": "termumformung",
@@ -497,10 +572,13 @@
       "domain": "Algebra",
       "title": "Termumformung",
       "text": "Das Umgestalten von Termen unter Beachtung mathematischer Regeln, um sie zu vereinfachen oder in eine andere Form zu bringen. Dies gilt auch für [[Bruchterme]].",
-      "x": -1340,
-      "y": -1155,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -1175,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#479FE3"
     },
     {
       "id": "variablen",
@@ -509,10 +587,13 @@
       "domain": "Algebra",
       "title": "Variablen",
       "text": "Symbole, die verschiedene Bedeutungen annehmen können, wie z.B. Veränderliche zur Beschreibung von Zuordnungen, Platzhalter in Termen oder Rechengesetzen, oder Unbekannte in Gleichungen und Gleichungssystemen.",
-      "x": -2100,
-      "y": -905,
-      "color": "#58C4DD",
-      "media": []
+      "x": -980,
+      "y": -940,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#479FE3"
     },
     {
       "id": "zahlenbereiche",
@@ -521,10 +602,13 @@
       "domain": "Algebra",
       "title": "Zahlenbereiche",
       "text": "Zahlenbereiche sind Mengen von Zahlen mit spezifischen Eigenschaften. Das Verständnis dieser Bereiche ist fundamental für die Arithmetik und Algebra.",
-      "x": -480,
-      "y": -780,
-      "color": "#58C4DD",
-      "media": []
+      "x": -935,
+      "y": -705,
+      "color": "#479FE3",
+      "media": [],
+      "depth": 2,
+      "minGrade": 5,
+      "parentColor": "#58C4DD"
     },
     {
       "id": "ganze-zahlen",
@@ -533,10 +617,13 @@
       "domain": "Algebra",
       "title": "Ganze Zahlen",
       "text": "Ganze Zahlen $$\\mathbb{Z}$$: \n\nSie erweitern die natürlichen Zahlen um deren Negative und die Null, z.B. ($$\\ldots$$ , -2, -1, 0, 1, 2, $$\\ldots$$ ). Sie werden zur Beschreibung von Zuständen und Veränderungen in Sachzusammenhängen genutzt.",
-      "x": -860,
-      "y": -905,
-      "color": "#58C4DD",
-      "media": []
+      "x": -550,
+      "y": -1058,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#479FE3"
     },
     {
       "id": "natuerliche-zahlen",
@@ -545,10 +632,13 @@
       "domain": "Algebra",
       "title": "Natürliche Zahlen",
       "text": "Natürliche Zahlen $$\\mathbb{N}$$: \n\nDies sind die Zahlen, die wir zum Zählen verwenden, z.B. (1, 2, 3, $$\\ldots$$) (manchmal auch (0) eingeschlossen). Sie bilden die Basis des Zahlenverständnisses und des Rechnens.",
-      "x": -100,
-      "y": -905,
-      "color": "#58C4DD",
-      "media": []
+      "x": -550,
+      "y": -822,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#479FE3"
     },
     {
       "id": "rationale-zahlen",
@@ -557,10 +647,13 @@
       "domain": "Algebra",
       "title": "Rationale Zahlen",
       "text": "Rationale Zahlen $$\\mathbb{Q}$$:\n\nDiese Zahlen können als Bruch $$\\frac{p}{q}$$ dargestellt werden, wobei $$p$$ eine ganze Zahl und $$q$$ eine natürliche Zahl ist ($$q \\neq 0$$). Dazu gehören endliche und periodische Dezimalzahlen.",
-      "x": -860,
-      "y": -655,
-      "color": "#58C4DD",
-      "media": []
+      "x": -550,
+      "y": -588,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 6,
+      "parentColor": "#479FE3"
     },
     {
       "id": "reelle-zahlen",
@@ -569,10 +662,13 @@
       "domain": "Algebra",
       "title": "Reelle Zahlen",
       "text": "Reelle Zahlen $$\\mathbb{R}$$: \n\nDies ist eine umfassende Menge, die sowohl rationale als auch irrationale Zahlen beinhaltet. Irrationale Zahlen sind Zahlen, die nicht als Bruch dargestellt werden können, wie z.B. $$\\pi$$ oder $$\\sqrt{2}$$. Die Unterscheidung von rationalen und irrationalen Zahlen ist ein wichtiges Konzept.",
-      "x": -100,
-      "y": -655,
-      "color": "#58C4DD",
-      "media": []
+      "x": -550,
+      "y": -352,
+      "color": "#687EE8",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#479FE3"
     },
     {
       "id": "geometrie",
@@ -583,10 +679,13 @@
       "title": "Geometrie",
       "fullTitle": "Geometrie",
       "text": "Die Geometrie ist die Lehre von Formen, Figuren, Größen und räumlichen Beziehungen. Sie untersucht Eigenschaften von [[Punkten|Punkt]], [[Geraden|Gerade]], Flächen bzw. [[Ebenen|Ebene]] und Körpern sowie deren [[Lagebeziehung|Beziehungen]] zueinander.",
-      "x": 1100,
-      "y": -780,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1150,
+      "y": -820,
+      "color": "#3CC4B2",
+      "media": [],
+      "depth": 1,
+      "minGrade": 5,
+      "parentColor": "#3CC4B2"
     },
     {
       "id": "abbildungen",
@@ -595,10 +694,13 @@
       "domain": "Geometrie",
       "title": "Abbildungen",
       "text": "",
-      "x": 1585,
-      "y": -1067,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 720,
+      "y": -1050,
+      "color": "#52C88A",
+      "media": [],
+      "depth": 2,
+      "minGrade": 5,
+      "parentColor": "#3CC4B2"
     },
     {
       "id": "spiegelung-an-ebenen",
@@ -607,10 +709,13 @@
       "domain": "Geometrie",
       "title": "Spiegelung an Ebenen",
       "text": "",
-      "x": 1205,
-      "y": -1192,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1105,
+      "y": -815,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#52C88A"
     },
     {
       "id": "verschiebungen-drehungen-punkt-und-achsenspiegelung",
@@ -619,10 +724,13 @@
       "domain": "Geometrie",
       "title": "Verschiebungen, Drehungen, Punkt- und Achsenspiegelung",
       "text": "",
-      "x": 1965,
-      "y": -1067,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1105,
+      "y": -1285,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "zentrische-streckung-aehnlichkeit",
@@ -631,10 +739,13 @@
       "domain": "Geometrie",
       "title": "Zentrische Streckung, Ähnlichkeit",
       "text": "",
-      "x": 1205,
-      "y": -942,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1105,
+      "y": -1050,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 9,
+      "parentColor": "#52C88A"
     },
     {
       "id": "analytische-geometrie-und-lineare-algebra",
@@ -643,10 +754,13 @@
       "domain": "Geometrie",
       "title": "Analytische Geometrie und Lineare Algebra",
       "text": "",
-      "x": 1704,
-      "y": -678,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1150,
+      "y": -590,
+      "color": "#52C88A",
+      "media": [],
+      "depth": 2,
+      "minGrade": 11,
+      "parentColor": "#3CC4B2"
     },
     {
       "id": "ebenen-in-parameterform-koordinatenform-normalenform",
@@ -655,10 +769,13 @@
       "domain": "Geometrie",
       "title": "Ebenen in Parameterform, Koordinatenform, Normalenform",
       "text": "",
-      "x": 1324,
-      "y": -1053,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -590,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#52C88A"
     },
     {
       "id": "eigenschaften-von-vektoren-laenge-kollinearitaet",
@@ -667,10 +784,13 @@
       "domain": "Geometrie",
       "title": "Eigenschaften von Vektoren (Länge, Kollinearität)",
       "text": "",
-      "x": 2084,
-      "y": -1053,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -1530,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#52C88A"
     },
     {
       "id": "geraden-und-strecken-in-parameterform",
@@ -679,10 +799,13 @@
       "domain": "Geometrie",
       "title": "Geraden und Strecken in Parameterform",
       "text": "",
-      "x": 1324,
-      "y": -803,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -1295,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#52C88A"
     },
     {
       "id": "koordinatisierungen-des-raumes-punkte-ortsvektoren-vektoren",
@@ -691,10 +814,13 @@
       "domain": "Geometrie",
       "title": "Koordinatisierungen des Raumes (Punkte, Ortsvektoren, Vektoren)",
       "text": "",
-      "x": 2084,
-      "y": -803,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -1060,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#52C88A"
     },
     {
       "id": "lineare-gleichungssysteme-im-zusammenhang-mit-lagebeziehungen",
@@ -703,10 +829,13 @@
       "domain": "Geometrie",
       "title": "Lineare Gleichungssysteme im Zusammenhang mit Lagebeziehungen",
       "text": "",
-      "x": 1324,
-      "y": -553,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -355,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#52C88A"
     },
     {
       "id": "schnittpunkte-geraden-und-ebenen",
@@ -715,10 +844,13 @@
       "domain": "Geometrie",
       "title": "Schnittpunkte (Geraden und Ebenen)",
       "text": "",
-      "x": 2084,
-      "y": -553,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -120,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#52C88A"
     },
     {
       "id": "schnittwinkel-geraden-geraden-und-ebenen-ebenen",
@@ -727,10 +859,13 @@
       "domain": "Geometrie",
       "title": "Schnittwinkel (Geraden, Geraden und Ebenen, Ebenen)",
       "text": "",
-      "x": 1324,
-      "y": -303,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": 115,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#52C88A"
     },
     {
       "id": "skalarprodukt-geometrische-deutung-berechnung",
@@ -739,10 +874,13 @@
       "domain": "Geometrie",
       "title": "Skalarprodukt (geometrische Deutung, Berechnung)",
       "text": "",
-      "x": 2084,
-      "y": -303,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": 350,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#52C88A"
     },
     {
       "id": "vektoroperationen-addition-multiplikation-mit-einem-skalar",
@@ -751,10 +889,13 @@
       "domain": "Geometrie",
       "title": "Vektoroperationen (Addition, Multiplikation mit einem Skalar)",
       "text": "",
-      "x": 959,
-      "y": -678,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -825,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#52C88A"
     },
     {
       "id": "ebene-figuren",
@@ -763,10 +904,13 @@
       "domain": "Geometrie",
       "title": "Ebene Figuren",
       "text": "",
-      "x": 1369,
-      "y": -366,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1150,
+      "y": -1050,
+      "color": "#52C88A",
+      "media": [],
+      "depth": 2,
+      "minGrade": 5,
+      "parentColor": "#3CC4B2"
     },
     {
       "id": "dreiecke",
@@ -775,10 +919,13 @@
       "domain": "Geometrie",
       "title": "Dreiecke",
       "text": "",
-      "x": 1749,
-      "y": -741,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -698,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 6,
+      "parentColor": "#52C88A"
     },
     {
       "id": "gerade",
@@ -787,10 +934,13 @@
       "domain": "Geometrie",
       "title": "Gerade",
       "text": "Eine Gerade beschreibt eine unendlich lange Linie, die auf ihrem Weg keine Krümmung hat.\nIn der Regel werden Geraden durch Kleinbuchstaben ($$g, h, ...$$) gekennzeichnet.",
-      "x": 989,
-      "y": -741,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -2108,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "kartesisches-koordinatensystem",
@@ -799,10 +949,13 @@
       "domain": "Geometrie",
       "title": "kartesisches Koordinatensystem",
       "text": "",
-      "x": 989,
-      "y": -491,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -1872,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "kreise",
@@ -811,10 +964,13 @@
       "domain": "Geometrie",
       "title": "Kreise",
       "text": "",
-      "x": 1749,
-      "y": -491,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -462,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 6,
+      "parentColor": "#52C88A"
     },
     {
       "id": "strecke",
@@ -823,10 +979,13 @@
       "domain": "Geometrie",
       "title": "Strecke",
       "text": "",
-      "x": 989,
-      "y": -241,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -1638,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "tangenten",
@@ -835,10 +994,13 @@
       "domain": "Geometrie",
       "title": "Tangenten",
       "text": "",
-      "x": 1749,
-      "y": -241,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": 8,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 9,
+      "parentColor": "#52C88A"
     },
     {
       "id": "umfang-und-flaecheninhalt",
@@ -847,10 +1009,13 @@
       "domain": "Geometrie",
       "title": "Umfang und Flächeninhalt",
       "text": "",
-      "x": 989,
-      "y": 9,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -1402,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "vierecke",
@@ -859,10 +1024,13 @@
       "domain": "Geometrie",
       "title": "Vierecke",
       "text": "",
-      "x": 1749,
-      "y": 9,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -1168,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "winkel",
@@ -871,10 +1039,13 @@
       "domain": "Geometrie",
       "title": "Winkel",
       "text": "",
-      "x": 624,
-      "y": -366,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -228,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 6,
+      "parentColor": "#52C88A"
     },
     {
       "id": "zerlegungs-und-ergaenzungsstrategien-zur-flaechenbestimmung",
@@ -883,10 +1054,13 @@
       "domain": "Geometrie",
       "title": "Zerlegungs- und Ergänzungsstrategien zur Flächenbestimmung",
       "text": "",
-      "x": 2114,
-      "y": -366,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -932,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "geometrische-saetze-und-trigonometrie",
@@ -895,10 +1069,13 @@
       "domain": "Geometrie",
       "title": "Geometrische Sätze und Trigonometrie",
       "text": "",
-      "x": 831,
-      "y": -366,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1580,
+      "y": -820,
+      "color": "#52C88A",
+      "media": [],
+      "depth": 2,
+      "minGrade": 7,
+      "parentColor": "#3CC4B2"
     },
     {
       "id": "innen-aussen-und-basiswinkelsatz-im-dreieck",
@@ -907,10 +1084,13 @@
       "domain": "Geometrie",
       "title": "Innen-, Außen,- und Basiswinkelsatz im Dreieck",
       "text": "",
-      "x": 451,
-      "y": -741,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1965,
+      "y": -1760,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#52C88A"
     },
     {
       "id": "kongruenzsaetze",
@@ -919,10 +1099,13 @@
       "domain": "Geometrie",
       "title": "Kongruenzsätze",
       "text": "",
-      "x": 1211,
-      "y": -741,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1965,
+      "y": -1525,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#52C88A"
     },
     {
       "id": "kosinus",
@@ -931,10 +1114,13 @@
       "domain": "Geometrie",
       "title": "Kosinus",
       "text": "",
-      "x": 451,
-      "y": -491,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1965,
+      "y": -585,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 10,
+      "parentColor": "#52C88A"
     },
     {
       "id": "kosinussatz",
@@ -943,10 +1129,13 @@
       "domain": "Geometrie",
       "title": "Kosinussatz",
       "text": "",
-      "x": 1211,
-      "y": -491,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1965,
+      "y": -350,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 10,
+      "parentColor": "#52C88A"
     },
     {
       "id": "neben-scheitel-stufen-und-wechselwinkelsatz",
@@ -955,10 +1144,13 @@
       "domain": "Geometrie",
       "title": "Neben-, Scheitel-, Stufen- und Wechselwinkelsatz",
       "text": "",
-      "x": 451,
-      "y": -241,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1965,
+      "y": -1290,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#52C88A"
     },
     {
       "id": "satz-des-pythagoras",
@@ -967,10 +1159,13 @@
       "domain": "Geometrie",
       "title": "Satz des Pythagoras",
       "text": "",
-      "x": 1211,
-      "y": -241,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1965,
+      "y": -820,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 9,
+      "parentColor": "#52C88A"
     },
     {
       "id": "satz-des-thales",
@@ -979,10 +1174,13 @@
       "domain": "Geometrie",
       "title": "Satz des Thales",
       "text": "",
-      "x": 451,
-      "y": 9,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1965,
+      "y": -1055,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#52C88A"
     },
     {
       "id": "sinus",
@@ -991,10 +1189,13 @@
       "domain": "Geometrie",
       "title": "Sinus",
       "text": "",
-      "x": 1211,
-      "y": 9,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1965,
+      "y": -115,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 10,
+      "parentColor": "#52C88A"
     },
     {
       "id": "tangens",
@@ -1003,10 +1204,13 @@
       "domain": "Geometrie",
       "title": "Tangens",
       "text": "",
-      "x": 86,
-      "y": -366,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1965,
+      "y": 120,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 10,
+      "parentColor": "#52C88A"
     },
     {
       "id": "grundlegende-definitionen",
@@ -1015,10 +1219,13 @@
       "domain": "Geometrie",
       "title": "Grundlegende Definitionen",
       "text": "Hier finden sich Definitionen (Axiome) auf denen wir unsere Geometrie aufbauen. Alle anderen Beschreibungen und Erklärungen basieren auf diesen Grundlagen.",
-      "x": 1100,
-      "y": -1240,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1580,
+      "y": -1050,
+      "color": "#52C88A",
+      "media": [],
+      "depth": 2,
+      "minGrade": 5,
+      "parentColor": "#3CC4B2"
     },
     {
       "id": "beziehungen",
@@ -1027,10 +1234,13 @@
       "domain": "Geometrie",
       "title": "Beziehungen",
       "text": "[[Punkte]], [[Geraden]] und [[Ebenen]] können durch folgende Beziehungen näher beschrieben oder verglichen werden. \n\n1. Inzidenz: \nDie Inzidenz bezeichnet ein Beinhalten von einem in einem anderen höher-dimensionalen Objekt. (Ein Punkt liegt in einer Geraden $$A \\in g$$.  Eine Gerade liegt in einer Ebene $$g \\in E)$$\n\n2. Anordnung:\nEine Gerade setzt sich aus einer konsistenten Reihenfolge von Punkten zusammen. Diese Reihenfolge ermöglicht eine Betrachtung zwischen zwei Punkten. (Punkt $$B$$ liegt zwischen Punkt $$A$$ und $$C$$)\n\n3. Kongruenz:\nStrecken oder Winkel können den gleichen Betrag besitzen. ($$\\overline{AB} \\cong \\overline{CD}$$ , $$\\alpha \\cong \\beta$$)",
-      "x": 720,
-      "y": -1365,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1965,
+      "y": -1285,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "ebene",
@@ -1039,10 +1249,13 @@
       "domain": "Geometrie",
       "title": "Ebene",
       "text": "Eine Ebene beschreibt eine Fläche die in seiner Ausrichtung keine Krümmung hat und eine unendliche Ausdehnung erlaubt. Ebenen werden, genauso wie Punkte, durch Großbuchstaben ($$E, F, ...$$) gekennzeichnet",
-      "x": 1480,
-      "y": -1240,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1965,
+      "y": -1050,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "punkt",
@@ -1051,10 +1264,13 @@
       "domain": "Geometrie",
       "title": "Punkt",
       "text": "Ein Punkt beschreibt einen Ort ohne dabei eine Ausdehnung im Raum zu haben. Punkte werden durch Großbuchstaben ($$A,B,C,...$$) gekennzeichnet.",
-      "x": 720,
-      "y": -1115,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1965,
+      "y": -815,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "koerper",
@@ -1063,10 +1279,13 @@
       "domain": "Geometrie",
       "title": "Körper",
       "text": "",
-      "x": 496,
-      "y": -678,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 720,
+      "y": -820,
+      "color": "#52C88A",
+      "media": [],
+      "depth": 2,
+      "minGrade": 5,
+      "parentColor": "#3CC4B2"
     },
     {
       "id": "kegel",
@@ -1075,10 +1294,13 @@
       "domain": "Geometrie",
       "title": "Kegel",
       "text": "",
-      "x": 116,
-      "y": -1053,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1105,
+      "y": -585,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 9,
+      "parentColor": "#52C88A"
     },
     {
       "id": "kugel",
@@ -1087,10 +1309,13 @@
       "domain": "Geometrie",
       "title": "Kugel",
       "text": "",
-      "x": 876,
-      "y": -1053,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1105,
+      "y": -350,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 9,
+      "parentColor": "#52C88A"
     },
     {
       "id": "oberflaecheninhalt-und-volumen",
@@ -1099,10 +1324,13 @@
       "domain": "Geometrie",
       "title": "Oberflächeninhalt und Volumen",
       "text": "",
-      "x": 116,
-      "y": -803,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1105,
+      "y": -1760,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "prinzip-von-cavalieri",
@@ -1111,10 +1339,13 @@
       "domain": "Geometrie",
       "title": "Prinzip von Cavalieri",
       "text": "",
-      "x": 876,
-      "y": -803,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1105,
+      "y": 120,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 10,
+      "parentColor": "#52C88A"
     },
     {
       "id": "prismen",
@@ -1123,10 +1354,13 @@
       "domain": "Geometrie",
       "title": "Prismen",
       "text": "",
-      "x": 116,
-      "y": -553,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1105,
+      "y": -1055,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#52C88A"
     },
     {
       "id": "pyramide",
@@ -1135,10 +1369,13 @@
       "domain": "Geometrie",
       "title": "Pyramide",
       "text": "",
-      "x": 876,
-      "y": -553,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1105,
+      "y": -115,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 9,
+      "parentColor": "#52C88A"
     },
     {
       "id": "quader",
@@ -1147,10 +1384,13 @@
       "domain": "Geometrie",
       "title": "Quader",
       "text": "",
-      "x": 116,
-      "y": -303,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1105,
+      "y": -1525,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "schraegbilder-und-netze",
@@ -1159,10 +1399,13 @@
       "domain": "Geometrie",
       "title": "Schrägbilder und Netze",
       "text": "",
-      "x": 876,
-      "y": -303,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1105,
+      "y": -1290,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "zylinder",
@@ -1171,10 +1414,13 @@
       "domain": "Geometrie",
       "title": "Zylinder",
       "text": "",
-      "x": -249,
-      "y": -678,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1105,
+      "y": -820,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#52C88A"
     },
     {
       "id": "lagebeziehung-und-symmetrie",
@@ -1183,10 +1429,13 @@
       "domain": "Geometrie",
       "title": "Lagebeziehung und Symmetrie",
       "text": "",
-      "x": 615,
-      "y": -1067,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1150,
+      "y": -820,
+      "color": "#52C88A",
+      "media": [],
+      "depth": 2,
+      "minGrade": 5,
+      "parentColor": "#3CC4B2"
     },
     {
       "id": "abstaende-zwischen-punkt-gerade-und-ebene",
@@ -1195,10 +1444,13 @@
       "domain": "Geometrie",
       "title": "Abstände zwischen Punkt, Gerade und Ebene",
       "text": "",
-      "x": 235,
-      "y": -1442,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": 2,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 13,
+      "parentColor": "#52C88A"
     },
     {
       "id": "achsensymmetrie",
@@ -1207,10 +1459,13 @@
       "domain": "Geometrie",
       "title": "Achsensymmetrie",
       "text": "",
-      "x": 995,
-      "y": -1442,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -1642,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "lagebeziehung-ebene-gerade",
@@ -1219,10 +1474,13 @@
       "domain": "Geometrie",
       "title": "Lagebeziehung Ebene - Gerade",
       "text": "",
-      "x": 235,
-      "y": -1192,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -468,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#52C88A"
     },
     {
       "id": "lagebeziehung-von-ebenen",
@@ -1231,10 +1489,13 @@
       "domain": "Geometrie",
       "title": "Lagebeziehung von Ebenen",
       "text": "",
-      "x": 995,
-      "y": -1192,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -232,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#52C88A"
     },
     {
       "id": "lagebeziehung-von-geraden",
@@ -1243,10 +1504,13 @@
       "domain": "Geometrie",
       "title": "Lagebeziehung von Geraden",
       "text": "",
-      "x": 235,
-      "y": -942,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -702,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#52C88A"
     },
     {
       "id": "orthogonolaitaet",
@@ -1255,10 +1519,13 @@
       "domain": "Geometrie",
       "title": "Orthogonolaität",
       "text": "",
-      "x": 995,
-      "y": -942,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -1408,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "parallelitaet",
@@ -1267,10 +1534,13 @@
       "domain": "Geometrie",
       "title": "Parallelität",
       "text": "",
-      "x": 235,
-      "y": -692,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -1172,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#52C88A"
     },
     {
       "id": "punktsymmetrie",
@@ -1279,10 +1549,13 @@
       "domain": "Geometrie",
       "title": "Punktsymmetrie",
       "text": "",
-      "x": 995,
-      "y": -692,
-      "color": "#5CD0B3",
-      "media": []
+      "x": 1535,
+      "y": -938,
+      "color": "#83C167",
+      "media": [],
+      "depth": 3,
+      "minGrade": 6,
+      "parentColor": "#52C88A"
     },
     {
       "id": "analysis",
@@ -1293,10 +1566,13 @@
       "title": "Analysis",
       "fullTitle": "Analysis",
       "text": "Die Analysis umfasst die Untersuchung von Funktionen mittels Differenzial- und Integralrechnung. Wichtige Themen sind Grenzwerte, Ableitungen zur Bestimmung von Extrem- und Wendepunkten sowie Integrale zur Flächen- und Volumenberechnung. Sie findet Anwendung in der Untersuchung von Polynom-, Exponential- und trigonometrischen Funktionen.",
-      "x": -1100,
-      "y": 780,
+      "x": -1150,
+      "y": 820,
       "color": "#F4D345",
-      "media": []
+      "media": [],
+      "depth": 1,
+      "minGrade": 7,
+      "parentColor": "#F4D345"
     },
     {
       "id": "differentialrechnung",
@@ -1305,16 +1581,19 @@
       "domain": "Analysis",
       "title": "Differentialrechnung",
       "text": "Die Differentialrechnung beschreibt grundsätzlich eine lokale Veränderung einer definierten Funktion und wird in der Regel unter Verwendung der Ableitung durchgeführt. Diese lokale Änderung wird allgemein durch den sogenannten [[Differentialquotient]] beschrieben. Desweiteren stellt die Differentialrechnung das Gegenstück zur Integralrechnung dar.",
-      "x": -1100,
-      "y": 320,
-      "color": "#F4D345",
+      "x": -1365,
+      "y": 935,
+      "color": "#F2A33C",
       "media": [
         {
           "type": "ggb",
           "label": "Darstellung Differentialquotient",
           "ggbId": "tummzgdt"
         }
-      ]
+      ],
+      "depth": 2,
+      "minGrade": 11,
+      "parentColor": "#F4D345"
     },
     {
       "id": "ableitungsregeln-potenz-summen-faktorregel",
@@ -1323,10 +1602,13 @@
       "domain": "Analysis",
       "title": "Ableitungsregeln (Potenz-, Summen-, Faktorregel)",
       "text": "",
-      "x": -720,
-      "y": -55,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": -358,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "differentialquotient",
@@ -1335,10 +1617,13 @@
       "domain": "Analysis",
       "title": "Differentialquotient",
       "text": "Der Differentialquotient beschreibt analog zu der schon bekannten linearen Steigung zwischen zwei Punkten A und B eine Steigung in genau einem Punkt P. Diese Transferleistung wird über eine Grenzwertbetrachtung in Abhängigkeit des Abstands $$h$$ zwischen den arbiträr gewählten Punkten A und B geliefert. Der Gedanke ist nun, diesen Abstand so gering wie möglich, und schlussendlich 0 werden zu lassen, sodass eine Betrachtung der Änderungsrate in einem und nicht mehr zwei Punkten entsteht.",
-      "x": -1480,
-      "y": -55,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": -122,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "extrempunkte",
@@ -1347,10 +1632,13 @@
       "domain": "Analysis",
       "title": "Extrempunkte",
       "text": "",
-      "x": -1480,
-      "y": 195,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 112,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "funktionsscharen",
@@ -1359,10 +1647,13 @@
       "domain": "Analysis",
       "title": "Funktionsscharen",
       "text": "",
-      "x": -720,
-      "y": 195,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 2228,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 13,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "grundlagen-des-ableitungsbegriffs",
@@ -1371,10 +1662,13 @@
       "domain": "Analysis",
       "title": "Grundlagen des Ableitungsbegriffs",
       "text": "",
-      "x": -1480,
-      "y": 445,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 348,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "kettenregel",
@@ -1383,10 +1677,13 @@
       "domain": "Analysis",
       "title": "Kettenregel",
       "text": "",
-      "x": -720,
-      "y": 445,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 1052,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "kruemmungsverhalten",
@@ -1395,10 +1692,13 @@
       "domain": "Analysis",
       "title": "Krümmungsverhalten",
       "text": "",
-      "x": -1480,
-      "y": 695,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 1288,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "lokale-und-globale-extrema",
@@ -1407,10 +1707,13 @@
       "domain": "Analysis",
       "title": "lokale und globale Extrema",
       "text": "",
-      "x": -720,
-      "y": 695,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 582,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "monotonie",
@@ -1419,10 +1722,13 @@
       "domain": "Analysis",
       "title": "Monotonie",
       "text": "",
-      "x": -1845,
-      "y": 195,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 818,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "produktregel",
@@ -1431,10 +1737,13 @@
       "domain": "Analysis",
       "title": "Produktregel",
       "text": "",
-      "x": -355,
-      "y": 195,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 1522,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "rekonstruktion-von-funktionstermen-steckbriefaufgaben",
@@ -1443,10 +1752,13 @@
       "domain": "Analysis",
       "title": "Rekonstruktion von Funktionstermen (\"Steckbriefaufgaben\")",
       "text": "",
-      "x": -1845,
-      "y": 445,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 1758,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "wendepunkte",
@@ -1455,10 +1767,13 @@
       "domain": "Analysis",
       "title": "Wendepunkte",
       "text": "",
-      "x": -355,
-      "y": 445,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 1992,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "funktionen",
@@ -1467,10 +1782,13 @@
       "domain": "Analysis",
       "title": "Funktionen",
       "text": "Eine Funktion $$f$$ ist eine eindeutige Zuordnung, die jedem Element $$x$$ einer Definitionsmenge $$D$$ genau ein Element in einer Zielmenge $$Z$$ zuweist. Man schreibt: \n$$\nf : D \\rightarrow Z, x \\mapsto y = f(x)$$\n\nEine Funktion erzeugt, durch die Abbildung aller einzelner Elemente als Punkte in einem Koordinatensystem, einen Funktionsgraphen.",
-      "x": -480,
-      "y": 780,
-      "color": "#F4D345",
-      "media": []
+      "x": -1365,
+      "y": 705,
+      "color": "#F2A33C",
+      "media": [],
+      "depth": 2,
+      "minGrade": 7,
+      "parentColor": "#F4D345"
     },
     {
       "id": "exponentialfunktionen",
@@ -1479,10 +1797,13 @@
       "domain": "Analysis",
       "title": "Exponentialfunktionen",
       "text": "Eine Exponentialfunktion beschreibt ein Wachstum oder einen Zerfall, bei der die Änderungsrate proportional zum aktuellen Wert ist. Im Gegensatz dazu bspw. haben lineare Funktionen eine konstante Änderungsrate.",
-      "x": -860,
-      "y": 405,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 940,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 10,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "e-funktionen",
@@ -1491,16 +1812,19 @@
       "domain": "Analysis",
       "title": "e-Funktionen",
       "text": "Wenn eine Exponentialfunktion die Basis $$e$$ als Wachstumsfaktor hat, nennen wir sie $$e$$-Funktion mit der Funktionsgleichung $$f(x) = a \\cdot e^{x}$$",
-      "x": -100,
-      "y": 405,
-      "color": "#F4D345",
+      "x": -595,
+      "y": 1058,
+      "color": "#FC6255",
       "media": [
         {
           "type": "ggb",
           "label": "Darstellung zum Probieren (exp)",
           "ggbId": "jnwnqtkh"
         }
-      ]
+      ],
+      "depth": 4,
+      "minGrade": 12,
+      "parentColor": "#EE7747"
     },
     {
       "id": "funktionsgleichung-exp",
@@ -1509,10 +1833,13 @@
       "domain": "Analysis",
       "title": "Funktionsgleichung (exp.)",
       "text": "Eine Zuordnung, die exponentielles Wachstum oder Zerfall beschreibt, hat grundlegend die Funktionsgleichung $$f(x) = a \\cdot q^{x}$$ mit dem Grundwert $$a$$ und dem Wachstumsfaktor $$q$$",
-      "x": -860,
-      "y": 655,
-      "color": "#F4D345",
-      "media": []
+      "x": -595,
+      "y": 822,
+      "color": "#FC6255",
+      "media": [],
+      "depth": 4,
+      "minGrade": 10,
+      "parentColor": "#EE7747"
     },
     {
       "id": "ganzrationale-funktionen",
@@ -1521,10 +1848,13 @@
       "domain": "Analysis",
       "title": "ganzrationale Funktionen",
       "text": "Eine Funktion, die aus einer endlichen Summe von [[Potenzfunktionen]] mit natürlichen Exponenten und konstanten Koeffizienten besteht wird als ganzrationale Funktion definiert und durch die Funktionsgleichung $$f(x) = a_{n} \\cdot x^{n} + a_{n-1} \\cdot x^{n-1} + ... + a_{1} \\cdot x + a_{0}$$ mit $$a_{n}, a_{n-1}, ... , a_{1}, a_{0} \\in \\mathbb{R}$$ beschrieben.",
-      "x": -100,
-      "y": 655,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 1528,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "lineare-funktionen",
@@ -1533,10 +1863,13 @@
       "domain": "Analysis",
       "title": "lineare Funktionen",
       "text": "Lineare Funktionen haben die Form $$f(x)=m \\cdot x+b$$ mit der [[Steigung|Steigung (lin)]] $$𝑚$$ und dem [[Y-Achsenabschnitt|Y-Achsenabschnitt (lin)]] $$b$$. Sie stellen eine konstante Änderungsrate dar und ergeben in der grafischen Darstellung eine Gerade.",
-      "x": -860,
-      "y": 905,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": -235,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "funktionsgleichung-lin",
@@ -1545,16 +1878,19 @@
       "domain": "Analysis",
       "title": "Funktionsgleichung (lin)",
       "text": "Eine lineare Funktion $$f$$ wird durch die Gleichung:\n\n \n$$f(x) = m \\cdot x + b$$ mit $$m,b \\in \\mathbb{R}$$\n\nDie Variable $$m$$ beschreibt hier die [[Steigung|Steigung (lin)]] oder Änderungsrate der Funktion und die Variable $$b$$ steht hier für den [[Y-Achsenabschnitt|Y-Achsenabschnitt (lin)]].",
-      "x": -100,
-      "y": 905,
-      "color": "#F4D345",
+      "x": -595,
+      "y": -235,
+      "color": "#FC6255",
       "media": [
         {
           "type": "ggb",
           "label": "Darstellung zum Probieren (lin)",
           "ggbId": "xuqdzwjz"
         }
-      ]
+      ],
+      "depth": 4,
+      "minGrade": 7,
+      "parentColor": "#EE7747"
     },
     {
       "id": "steigung-lin",
@@ -1563,10 +1899,13 @@
       "domain": "Analysis",
       "title": "Steigung (lin)",
       "text": "Die Steigung, bzw. Änderungsrate, $$m$$ einer linearen Funktion $$f(x)$$ wird als ein sogenannter Differenzenquotient beschrieben und ergibt sich aus der Betrachtung von dem Verhältnis zwischen der Verschiebung in $$y$$-Richtung und der Verschiebung in $$x$$-Richtung. Die entstehende Gleichung wird geometrisch interpretiert als Verschiebung von Punkt $$P_{1}$$ mit $$(x_{1} | f( x_{1} ))$$ zu Punkt $$P_{2}$$ mit $$(x_{2} | f( x_{2} ))$$. \n\n$$m = \\frac{f( x_{2})-f( x_{1})}{x_{2}-x_{1}}$$",
-      "x": -860,
-      "y": 1155,
-      "color": "#F4D345",
-      "media": []
+      "x": -210,
+      "y": -352,
+      "color": "#FC6255",
+      "media": [],
+      "depth": 5,
+      "minGrade": 7,
+      "parentColor": "#EE7747"
     },
     {
       "id": "y-achsenabschnitt-lin",
@@ -1575,10 +1914,13 @@
       "domain": "Analysis",
       "title": "Y-Achsenabschnitt (lin)",
       "text": "Der $$y$$-Achsenabschnitt beschreibt den Funktionswert des Schnittpunktes der Geraden $$f(x)$$ mit der $$y$$-Achse und im Sachzusammenhang häufig einen Start- oder Grundwert der sich linear vermehrt oder verringert.",
-      "x": -100,
-      "y": 1155,
-      "color": "#F4D345",
-      "media": []
+      "x": -210,
+      "y": -118,
+      "color": "#FC6255",
+      "media": [],
+      "depth": 5,
+      "minGrade": 7,
+      "parentColor": "#EE7747"
     },
     {
       "id": "natuerliche-logarithmusfunktion",
@@ -1587,10 +1929,13 @@
       "domain": "Analysis",
       "title": "Natürliche Logarithmusfunktion",
       "text": "",
-      "x": -1225,
-      "y": 1155,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 1762,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "potenzfunktionen",
@@ -1599,16 +1944,19 @@
       "domain": "Analysis",
       "title": "Potenzfunktionen",
       "text": "Eine Potenzfunktion ist eine elementare mathematische Funktion, die durch die Gleichung $$f(x)  = x^{n}$$ definiert ist, wobei der Exponent eine feste reelle Zahl $$n$$ darstellt und die Basis $$x$$ die unabhängige Variable ist. Der Exponent $$n$$ ist eine konstante reelle Zahl, die das Verhalten der Funktion maßgeblich bestimmt.",
-      "x": -1225,
-      "y": 405,
-      "color": "#F4D345",
+      "x": -980,
+      "y": 1292,
+      "color": "#EE7747",
       "media": [
         {
           "type": "ggb",
           "label": "Darstellung zum Probieren",
           "ggbId": "sm4ngxrc"
         }
-      ]
+      ],
+      "depth": 3,
+      "minGrade": 10,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "quadratische-funktionen",
@@ -1617,10 +1965,13 @@
       "domain": "Analysis",
       "title": "quadratische Funktionen",
       "text": "Die quadratische Funktion $$f(x) = a x^{2} + b x +c  $$ ist eine bestimmte [[Potenzfunktion|Potenzfunktionen]] und beschreibt geometrisch immer eine Parabel, solange $$a \\neq 0$$ gilt.",
-      "x": 265,
-      "y": 530,
-      "color": "#F4D345",
-      "media": []
+      "x": -980,
+      "y": 352,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "funktionsgleichung-quadr",
@@ -1629,10 +1980,13 @@
       "domain": "Analysis",
       "title": "Funktionsgleichung (quadr.)",
       "text": "Die quadratische Funktionsgleichung hat konventionell drei verschiedene Arten von Gleichungen für die Beschreibung der gleichen Funktion. \n\n1. [[Normalform]]:\n\n$$f(x) = a x^{2} + b x + c  $$\n\n2. [[Scheitelpunktsform]]:\n\n$$f(x) = a(x^{2}-d)^{2} + e$$, mit dem Scheitelpunkt $$S(d|e)$$ und dem Streckungs-/ Stauchungsfaktor $$a$$\n\n3. [[Faktorisierte Form]]: \n\n$$f(x) = (x-n_{1})(x-n_{2})$$ mit $$n_{1}$$ und $$n_{2}$$ als Nullstellen der Funktion $$f(x)$$",
-      "x": -1225,
-      "y": 655,
-      "color": "#F4D345",
-      "media": []
+      "x": -595,
+      "y": 352,
+      "color": "#FC6255",
+      "media": [],
+      "depth": 4,
+      "minGrade": 8,
+      "parentColor": "#EE7747"
     },
     {
       "id": "faktorisierte-form",
@@ -1641,16 +1995,19 @@
       "domain": "Analysis",
       "title": "Faktorisierte Form",
       "text": "Eine quadratische Form, welche durch das Produkt ihrer Nullstellen $$n_{1}$$ und $$n_{2}$$ beschrieben wird hat die Funktionsgleichung $$f(x) = (x - n_{1}) \\cdot (x - n_{2})$$",
-      "x": 265,
-      "y": 780,
-      "color": "#F4D345",
+      "x": -210,
+      "y": 588,
+      "color": "#FC6255",
       "media": [
         {
           "type": "ggb",
           "label": "Darstellung zum Probieren (Fak. Form)",
           "ggbId": "ynha93b6"
         }
-      ]
+      ],
+      "depth": 5,
+      "minGrade": 9,
+      "parentColor": "#EE7747"
     },
     {
       "id": "normalform",
@@ -1659,16 +2016,19 @@
       "domain": "Analysis",
       "title": "Normalform",
       "text": "Eine quadratische Funktion in Normalform gibt Auskunft über den Streckungs- oder Stauchungsfaktor $$a$$ und den $$y$$-Achsenabschnitt $$c$$ durch die Funktionsgleichung $$f(x) = a \\cdot x^{2} + b \\cdot x + c$$",
-      "x": -1225,
-      "y": 905,
-      "color": "#F4D345",
+      "x": -210,
+      "y": 118,
+      "color": "#FC6255",
       "media": [
         {
           "type": "ggb",
           "label": "Darstellung zum Probieren (quadr. Norm)",
           "ggbId": "scwpt8jd"
         }
-      ]
+      ],
+      "depth": 5,
+      "minGrade": 8,
+      "parentColor": "#EE7747"
     },
     {
       "id": "scheitelpunktsform",
@@ -1677,16 +2037,19 @@
       "domain": "Analysis",
       "title": "Scheitelpunktsform",
       "text": "Eine quadratische Funktion beschrieben durch den Scheitelpunkt $$S(d|e)$$ und den Streckungs- oder Stauchungsfaktor $$a$$ ergibt die Funktionsgleichung $$f(x) = a \\cdot (x-d)^{2} +e",
-      "x": 265,
-      "y": 1030,
-      "color": "#F4D345",
+      "x": -210,
+      "y": 352,
+      "color": "#FC6255",
       "media": [
         {
           "type": "ggb",
           "label": "Darstellung zum Probieren (quadr. SPF)",
           "ggbId": "qjp8xs7f"
         }
-      ]
+      ],
+      "depth": 5,
+      "minGrade": 8,
+      "parentColor": "#EE7747"
     },
     {
       "id": "integralrechnung",
@@ -1695,10 +2058,13 @@
       "domain": "Analysis",
       "title": "Integralrechnung",
       "text": "Integralrechnung ist ein zentrales Konzept der [[Analysis]], das eng mit der [[Differentialrechnung]] verbunden ist. Sie dient dazu, Flächen unter Funktionsgraphen zu berechnen, Akkumulationsprozesse (wie Weg aus Geschwindigkeit oder Arbeit aus Kraft) zu modellieren und die Umkehrung der Differentiation durchzuführen.\n\n\n__Unbestimmte Integrale (Antidifferentiation):__\nHier wird eine Stammfunktion $$F(x)$$ gesucht, sodass $$F'(x) = f(x)$$. Das Ergebnis ist eine Funktionenschar:\n\n$$\\int f(x) dx = F(x) + C$$ mit $$C \\in \\mathbb{R}$$\n\n__Bestimmte Integrale (Flächenberechnung):__\nDiese berechnen den orientierten Flächeninhalt zwischen einer Funktion $$f(x)$$ und der $$x$$ - Achse über ein Intervall $$[a;b]$$: \n\n$$\\int_a^bf(x) dx = F(b)- F(a)$$.\n\nDer Hauptsatz der Differential- und Integralrechnung verbindet beide Konzepte: Er besagt, dass Integration die Umkehrung der Differentiation ist und stellt damit die Grundlage für die Berechnung bestimmter Integrale mittels Stammfunktionen dar.\n\nAnwendungen finden sich in Physik (z. B. Arbeit, Volumenberechnung), Wahrscheinlichkeitstheorie (Erwartungswerte) und vielen anderen Bereichen. Zusammengefasst: Die Integralrechnung quantifiziert, wie sich Größen über die Zeit oder den Raum ansammeln.",
-      "x": -1100,
-      "y": 1240,
-      "color": "#F4D345",
-      "media": []
+      "x": -935,
+      "y": 935,
+      "color": "#F2A33C",
+      "media": [],
+      "depth": 2,
+      "minGrade": 12,
+      "parentColor": "#F4D345"
     },
     {
       "id": "bestandsfunktion",
@@ -1707,10 +2073,13 @@
       "domain": "Analysis",
       "title": "Bestandsfunktion",
       "text": "",
-      "x": -1480,
-      "y": 865,
-      "color": "#F4D345",
-      "media": []
+      "x": -550,
+      "y": -122,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "bestimmtes-integral",
@@ -1719,10 +2088,13 @@
       "domain": "Analysis",
       "title": "Bestimmtes Integral",
       "text": "",
-      "x": -720,
-      "y": 865,
-      "color": "#F4D345",
-      "media": []
+      "x": -550,
+      "y": 112,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "hauptsatz-der-differential-und-integralrechnung",
@@ -1731,10 +2103,13 @@
       "domain": "Analysis",
       "title": "Hauptsatz der Differential- und Integralrechnung",
       "text": "",
-      "x": -1480,
-      "y": 1115,
-      "color": "#F4D345",
-      "media": []
+      "x": -550,
+      "y": 348,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "integralfunktion",
@@ -1743,10 +2118,13 @@
       "domain": "Analysis",
       "title": "Integralfunktion",
       "text": "",
-      "x": -720,
-      "y": 1115,
-      "color": "#F4D345",
-      "media": []
+      "x": -550,
+      "y": 582,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "intervalladditivitaet-und-linearitaet-von-integralen",
@@ -1755,10 +2133,13 @@
       "domain": "Analysis",
       "title": "Intervalladditivität und Linearität von Integralen",
       "text": "",
-      "x": -1480,
-      "y": 1365,
-      "color": "#F4D345",
-      "media": []
+      "x": -550,
+      "y": 818,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "orientierte-flaeche",
@@ -1767,10 +2148,13 @@
       "domain": "Analysis",
       "title": "Orientierte Fläche",
       "text": "",
-      "x": -720,
-      "y": 1365,
-      "color": "#F4D345",
-      "media": []
+      "x": -550,
+      "y": 1052,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "produktsumme",
@@ -1779,10 +2163,13 @@
       "domain": "Analysis",
       "title": "Produktsumme",
       "text": "",
-      "x": -1480,
-      "y": 1615,
-      "color": "#F4D345",
-      "media": []
+      "x": -550,
+      "y": 1288,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "stammfunktion",
@@ -1791,10 +2178,13 @@
       "domain": "Analysis",
       "title": "Stammfunktion",
       "text": "",
-      "x": -720,
-      "y": 1615,
-      "color": "#F4D345",
-      "media": []
+      "x": -550,
+      "y": 1522,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "uneigentliche-integrale",
@@ -1803,10 +2193,13 @@
       "domain": "Analysis",
       "title": "Uneigentliche Integrale",
       "text": "",
-      "x": -1845,
-      "y": 1240,
-      "color": "#F4D345",
-      "media": []
+      "x": -550,
+      "y": 1758,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 13,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "volumina-von-rotationskoerpern",
@@ -1815,10 +2208,13 @@
       "domain": "Analysis",
       "title": "Volumina von Rotationskörpern",
       "text": "",
-      "x": -355,
-      "y": 1240,
-      "color": "#F4D345",
-      "media": []
+      "x": -550,
+      "y": 1992,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 13,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "transformationen",
@@ -1827,10 +2223,13 @@
       "domain": "Analysis",
       "title": "Transformationen",
       "text": "",
-      "x": -1720,
-      "y": 780,
-      "color": "#F4D345",
-      "media": []
+      "x": -935,
+      "y": 705,
+      "color": "#F2A33C",
+      "media": [],
+      "depth": 2,
+      "minGrade": 8,
+      "parentColor": "#F4D345"
     },
     {
       "id": "spiegelung-an-koordinatenachsen",
@@ -1839,10 +2238,13 @@
       "domain": "Analysis",
       "title": "Spiegelung an Koordinatenachsen",
       "text": "",
-      "x": -2100,
-      "y": 655,
-      "color": "#F4D345",
-      "media": []
+      "x": -550,
+      "y": 940,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 10,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "streckung",
@@ -1851,10 +2253,13 @@
       "domain": "Analysis",
       "title": "Streckung",
       "text": "",
-      "x": -1340,
-      "y": 780,
-      "color": "#F4D345",
-      "media": []
+      "x": -550,
+      "y": 470,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "verschiebung",
@@ -1863,10 +2268,13 @@
       "domain": "Analysis",
       "title": "Verschiebung",
       "text": "",
-      "x": -2100,
-      "y": 905,
-      "color": "#F4D345",
-      "media": []
+      "x": -550,
+      "y": 705,
+      "color": "#EE7747",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#F2A33C"
     },
     {
       "id": "stochastik",
@@ -1877,10 +2285,13 @@
       "title": "Stochastik",
       "fullTitle": "Stochastik",
       "text": "Statistische Daten, Wahrscheinlichkeit & Verteilungen",
-      "x": 1100,
-      "y": 780,
+      "x": 1150,
+      "y": 820,
       "color": "#9A72AC",
-      "media": []
+      "media": [],
+      "depth": 1,
+      "minGrade": 5,
+      "parentColor": "#9A72AC"
     },
     {
       "id": "beurteilende-statistik",
@@ -1889,10 +2300,13 @@
       "domain": "Stochastik",
       "title": "Beurteilende Statistik",
       "text": "",
-      "x": 1637,
-      "y": 550,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1150,
+      "y": 935,
+      "color": "#B96BA8",
+      "media": [],
+      "depth": 2,
+      "minGrade": 13,
+      "parentColor": "#9A72AC"
     },
     {
       "id": "hypothesentesten",
@@ -1901,10 +2315,13 @@
       "domain": "Stochastik",
       "title": "Hypothesentesten",
       "text": "",
-      "x": 1257,
-      "y": 425,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": 582,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 13,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "konfidenzintervall",
@@ -1913,10 +2330,13 @@
       "domain": "Stochastik",
       "title": "Konfidenzintervall",
       "text": "",
-      "x": 2017,
-      "y": 425,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": 818,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 13,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "prognoseintervall",
@@ -1925,10 +2345,13 @@
       "domain": "Stochastik",
       "title": "Prognoseintervall",
       "text": "",
-      "x": 1257,
-      "y": 675,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": 1052,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 13,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "stichprobenumfang",
@@ -1937,10 +2360,13 @@
       "domain": "Stochastik",
       "title": "Stichprobenumfang",
       "text": "",
-      "x": 2017,
-      "y": 675,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": 1288,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 13,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "binomialverteilung",
@@ -1949,10 +2375,13 @@
       "domain": "Stochastik",
       "title": "Binomialverteilung",
       "text": "",
-      "x": 1637,
-      "y": 1010,
-      "color": "#9A72AC",
-      "media": []
+      "x": 720,
+      "y": 935,
+      "color": "#B96BA8",
+      "media": [],
+      "depth": 2,
+      "minGrade": 12,
+      "parentColor": "#9A72AC"
     },
     {
       "id": "binomialkoeffizient",
@@ -1961,10 +2390,13 @@
       "domain": "Stochastik",
       "title": "Binomialkoeffizient",
       "text": "",
-      "x": 1257,
-      "y": 885,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1105,
+      "y": 582,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "histogramme",
@@ -1973,10 +2405,13 @@
       "domain": "Stochastik",
       "title": "Histogramme",
       "text": "",
-      "x": 2017,
-      "y": 885,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1105,
+      "y": 818,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "kenngroessen",
@@ -1985,10 +2420,13 @@
       "domain": "Stochastik",
       "title": "Kenngrößen",
       "text": "",
-      "x": 1257,
-      "y": 1135,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1105,
+      "y": 1052,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "regeln",
@@ -1997,10 +2435,13 @@
       "domain": "Stochastik",
       "title": "σ-Regeln",
       "text": "",
-      "x": 2017,
-      "y": 1135,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1105,
+      "y": 1288,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 12,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "diskrete-zufallsgroessen",
@@ -2009,10 +2450,13 @@
       "domain": "Stochastik",
       "title": "Diskrete Zufallsgrößen",
       "text": "",
-      "x": 1100,
-      "y": 1240,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1580,
+      "y": 705,
+      "color": "#B96BA8",
+      "media": [],
+      "depth": 2,
+      "minGrade": 11,
+      "parentColor": "#9A72AC"
     },
     {
       "id": "erwartungswert",
@@ -2021,10 +2465,13 @@
       "domain": "Stochastik",
       "title": "Erwartungswert",
       "text": "$$µ(x)=\\sum_{i=1}^{n} x_{i}\\cdot px_{i}$$",
-      "x": 720,
-      "y": 1115,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1965,
+      "y": 352,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "standardabweichung",
@@ -2033,10 +2480,13 @@
       "domain": "Stochastik",
       "title": "Standardabweichung",
       "text": "$$\\sigma(x) = \\sqrt{\\sum_{i=1}^{n} (µ-x_{i})^2 \\cdot p(x_{i})}",
-      "x": 1480,
-      "y": 1115,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1965,
+      "y": 588,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "varianz",
@@ -2045,10 +2495,13 @@
       "domain": "Stochastik",
       "title": "Varianz",
       "text": "$$\\sigma^2(x)=\\sum_{i=1}^{n} (µ-x_{i})^2 \\cdot p(x_{i})",
-      "x": 720,
-      "y": 1365,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1965,
+      "y": 822,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "wahrscheinlichkeitsverteilungen",
@@ -2057,10 +2510,13 @@
       "domain": "Stochastik",
       "title": "Wahrscheinlichkeitsverteilungen",
       "text": "",
-      "x": 1480,
-      "y": 1365,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1965,
+      "y": 1058,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "normalverteilung",
@@ -2069,10 +2525,13 @@
       "domain": "Stochastik",
       "title": "Normalverteilung",
       "text": "",
-      "x": 563,
-      "y": 1010,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1580,
+      "y": 935,
+      "color": "#B96BA8",
+      "media": [],
+      "depth": 2,
+      "minGrade": 13,
+      "parentColor": "#9A72AC"
     },
     {
       "id": "dichtefunktion-gauss-sche-glockenkurve",
@@ -2081,10 +2540,13 @@
       "domain": "Stochastik",
       "title": "Dichtefunktion (\"Gauß'sche Glockenkurve\")",
       "text": "",
-      "x": 183,
-      "y": 885,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1965,
+      "y": 582,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 13,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "graph-der-verteilungsfunktion",
@@ -2093,10 +2555,13 @@
       "domain": "Stochastik",
       "title": "Graph der Verteilungsfunktion",
       "text": "",
-      "x": 943,
-      "y": 885,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1965,
+      "y": 818,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 13,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "parameter-und",
@@ -2105,10 +2570,13 @@
       "domain": "Stochastik",
       "title": "Parameter µ und σ",
       "text": "",
-      "x": 183,
-      "y": 1135,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1965,
+      "y": 1052,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 13,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "unterscheidung-diskreter-und-stetiger-zufallsgroessen",
@@ -2117,10 +2585,13 @@
       "domain": "Stochastik",
       "title": "Unterscheidung diskreter und stetiger Zufallsgrößen",
       "text": "",
-      "x": 943,
-      "y": 1135,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1965,
+      "y": 1288,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 13,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "statistische-daten",
@@ -2129,10 +2600,13 @@
       "domain": "Stochastik",
       "title": "Statistische Daten",
       "text": "",
-      "x": 563,
-      "y": 550,
-      "color": "#9A72AC",
-      "media": []
+      "x": 720,
+      "y": 705,
+      "color": "#B96BA8",
+      "media": [],
+      "depth": 2,
+      "minGrade": 5,
+      "parentColor": "#9A72AC"
     },
     {
       "id": "analyse-und-kritische-beurteilung-grafischer-darstellungen-manipulationen",
@@ -2141,10 +2615,13 @@
       "domain": "Stochastik",
       "title": "Analyse und kritische Beurteilung grafischer Darstellungen (Manipulationen)",
       "text": "",
-      "x": 943,
-      "y": 425,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1105,
+      "y": 1292,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "arithmetisches-mittel",
@@ -2153,10 +2630,13 @@
       "domain": "Stochastik",
       "title": "Arithmetisches Mittel",
       "text": "Das arithmetische Mittel ist der Quotient aus der Summe aller Werte und der Menge aller Werte.\n\n$$ \\overline{x} \\coloneqq \\frac{x_1+x_2+\\dots+x_n}{n} = \\frac{1}{n}\\cdot\\sum x_i",
-      "x": 183,
-      "y": 175,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1105,
+      "y": 822,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 6,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "darstellungen",
@@ -2165,10 +2645,13 @@
       "domain": "Stochastik",
       "title": "Darstellungen",
       "text": "",
-      "x": 183,
-      "y": 675,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1105,
+      "y": -352,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "boxplot",
@@ -2177,10 +2660,13 @@
       "domain": "Stochastik",
       "title": "Boxplot",
       "text": "Ein Boxplot ist eine graphische Darstellungsart von relevanten statistischen Kenngrößen (Spannweite, Median, Quartile).",
-      "x": 943,
-      "y": 675,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1490,
+      "y": -118,
+      "color": "#E87580",
+      "media": [],
+      "depth": 4,
+      "minGrade": 7,
+      "parentColor": "#D56A95"
     },
     {
       "id": "kreisdiagramme",
@@ -2189,10 +2675,13 @@
       "domain": "Stochastik",
       "title": "Kreisdiagramme",
       "text": "",
-      "x": 183,
-      "y": 925,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1490,
+      "y": -352,
+      "color": "#E87580",
+      "media": [],
+      "depth": 4,
+      "minGrade": 6,
+      "parentColor": "#D56A95"
     },
     {
       "id": "saeulendiagramme",
@@ -2201,10 +2690,13 @@
       "domain": "Stochastik",
       "title": "Säulendiagramme",
       "text": "",
-      "x": 943,
-      "y": 925,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1490,
+      "y": -588,
+      "color": "#E87580",
+      "media": [],
+      "depth": 4,
+      "minGrade": 5,
+      "parentColor": "#D56A95"
     },
     {
       "id": "datenerhebung",
@@ -2213,10 +2705,13 @@
       "domain": "Stochastik",
       "title": "Datenerhebung",
       "text": "",
-      "x": -182,
-      "y": 300,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1105,
+      "y": 352,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 5,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "klasseneinteilungen",
@@ -2225,10 +2720,13 @@
       "domain": "Stochastik",
       "title": "Klasseneinteilungen",
       "text": "",
-      "x": -182,
-      "y": 550,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1490,
+      "y": 588,
+      "color": "#E87580",
+      "media": [],
+      "depth": 4,
+      "minGrade": 6,
+      "parentColor": "#D56A95"
     },
     {
       "id": "strichlisten",
@@ -2237,10 +2735,13 @@
       "domain": "Stochastik",
       "title": "Strichlisten",
       "text": "",
-      "x": 1308,
-      "y": 550,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1490,
+      "y": 118,
+      "color": "#E87580",
+      "media": [],
+      "depth": 4,
+      "minGrade": 5,
+      "parentColor": "#D56A95"
     },
     {
       "id": "urlisten",
@@ -2249,10 +2750,13 @@
       "domain": "Stochastik",
       "title": "Urlisten",
       "text": "Eine Urliste von Daten ist eine unsortierte Auflistung von einzelnen Datenpunkten (bspw. die Sprungweiten aller Teilnehmenden in chronologischer Reihenfolge), welche die Grundlage für alle weiteren statistischen Untersuchen bildet.",
-      "x": 1308,
-      "y": 300,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1490,
+      "y": 352,
+      "color": "#E87580",
+      "media": [],
+      "depth": 4,
+      "minGrade": 5,
+      "parentColor": "#D56A95"
     },
     {
       "id": "median",
@@ -2261,10 +2765,13 @@
       "domain": "Stochastik",
       "title": "Median",
       "text": "Der Median wird bestimmt durch die Sortierung aller zu untersuchenden Werte. Ist die Menge der Werte ungerade, ist der Median der \"mittlere\" Wert, also der Wert der quantitativ gleichweit vom Maximum und Minimum entfernt ist. Ist die Menge der Werte gerade, gibt es keinen einzelnen \"mittleren\" Wert, sondern zwei. Aus diesen beiden wird das arithmetische Mittel gebildet, dies ist dann der Median des Datensatzes.",
-      "x": 943,
-      "y": 175,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1105,
+      "y": 1528,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "modalwert",
@@ -2273,10 +2780,13 @@
       "domain": "Stochastik",
       "title": "Modalwert",
       "text": "Der Modalwert ist eine Form des [[Durchschnitts|Durchschnitt]] und stellt den Wert mit der höchsten [[absoluten Häufigkeit|Absolute Häufigkeiten]] dar.",
-      "x": 183,
-      "y": 425,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1105,
+      "y": 1762,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "relative-und-absolute-haeufigkeiten",
@@ -2285,10 +2795,13 @@
       "domain": "Stochastik",
       "title": "Relative und absolute Häufigkeiten",
       "text": "",
-      "x": -182,
-      "y": 800,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1105,
+      "y": 1058,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 6,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "stichprobenuntersuchung-mithilfe-von-lage-und-streumassen",
@@ -2297,10 +2810,13 @@
       "domain": "Stochastik",
       "title": "Stichprobenuntersuchung mithilfe von Lage- und Streumaßen",
       "text": "",
-      "x": 1308,
-      "y": 800,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1105,
+      "y": 1998,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "wahrscheinlichkeiten-und-zufallsexperimente",
@@ -2309,10 +2825,13 @@
       "domain": "Stochastik",
       "title": "Wahrscheinlichkeiten und Zufallsexperimente",
       "text": "Eine Wahrscheinlichkeit $$p$$ beschreibt die Verteilung eines Ereignisses $$E$$ aus einer Ergebnismenge $$\\Omega$$ . Diese Verteilung ergibt sich oft aus einer Betrachtung von relativen Häufigkeiten.",
-      "x": 1100,
-      "y": 320,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1150,
+      "y": 705,
+      "color": "#B96BA8",
+      "media": [],
+      "depth": 2,
+      "minGrade": 6,
+      "parentColor": "#9A72AC"
     },
     {
       "id": "baumdiagramm",
@@ -2321,10 +2840,13 @@
       "domain": "Stochastik",
       "title": "Baumdiagramm",
       "text": "",
-      "x": 720,
-      "y": -55,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": 118,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "bedingte-wahrscheinlichkeit",
@@ -2333,10 +2855,13 @@
       "domain": "Stochastik",
       "title": "Bedingte Wahrscheinlichkeit",
       "text": "",
-      "x": 1480,
-      "y": -55,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": 1528,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 9,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "ein-und-zweistufige-zufallsversuche",
@@ -2345,10 +2870,13 @@
       "domain": "Stochastik",
       "title": "Ein- und zweistufige Zufallsversuche",
       "text": "",
-      "x": 720,
-      "y": 195,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": 352,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "empirisches-gesetz-der-grossen-zahlen-laplace-wahrscheinlichkeit-pfadregeln",
@@ -2357,10 +2885,13 @@
       "domain": "Stochastik",
       "title": "Empirisches Gesetz der großen Zahlen, Laplace-Wahrscheinlichkeit, Pfadregeln",
       "text": "",
-      "x": 1480,
-      "y": 195,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": 588,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 7,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "ereignis",
@@ -2369,10 +2900,13 @@
       "domain": "Stochastik",
       "title": "Ereignis",
       "text": "",
-      "x": 720,
-      "y": 445,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": -588,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 6,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "ergebnis",
@@ -2381,10 +2915,13 @@
       "domain": "Stochastik",
       "title": "Ergebnis",
       "text": "",
-      "x": 1480,
-      "y": 445,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": -352,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 6,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "kombinatorische-ueberlegungen",
@@ -2393,10 +2930,13 @@
       "domain": "Stochastik",
       "title": "Kombinatorische Überlegungen",
       "text": "",
-      "x": 720,
-      "y": 695,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": 822,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "simulationen-stochastischer-situationen",
@@ -2405,10 +2945,13 @@
       "domain": "Stochastik",
       "title": "Simulationen stochastischer Situationen",
       "text": "",
-      "x": 1480,
-      "y": 695,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": 1058,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "stochastische-unabhaengigkeit",
@@ -2417,10 +2960,13 @@
       "domain": "Stochastik",
       "title": "Stochastische Unabhängigkeit",
       "text": "",
-      "x": 355,
-      "y": 195,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": 1998,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 11,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "urnenmodelle-ziehen-mit-und-ohne-zuruecklegen",
@@ -2429,10 +2975,13 @@
       "domain": "Stochastik",
       "title": "Urnenmodelle (Ziehen mit und ohne Zurücklegen)",
       "text": "",
-      "x": 1845,
-      "y": 195,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": 1292,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 8,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "vierfeldertafel",
@@ -2441,10 +2990,13 @@
       "domain": "Stochastik",
       "title": "Vierfeldertafel",
       "text": "",
-      "x": 355,
-      "y": 445,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": 1762,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 9,
+      "parentColor": "#B96BA8"
     },
     {
       "id": "wahrscheinlichkeit",
@@ -2453,10 +3005,13 @@
       "domain": "Stochastik",
       "title": "Wahrscheinlichkeit",
       "text": "",
-      "x": 1845,
-      "y": 445,
-      "color": "#9A72AC",
-      "media": []
+      "x": 1535,
+      "y": -118,
+      "color": "#D56A95",
+      "media": [],
+      "depth": 3,
+      "minGrade": 6,
+      "parentColor": "#B96BA8"
     }
   ]
 }
