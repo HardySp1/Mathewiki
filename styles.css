@@ -37,7 +37,8 @@ html, body {
 .hud-top {
   position: fixed; top: 12px; left: 12px; right: 12px; z-index: 100;
   display: flex; justify-content: space-between; align-items: center; gap: 10px;
-  background: rgba(18, 20, 26, 0.88);
+  flex-wrap: wrap;
+  background: rgba(18, 20, 26, 0.90);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   padding: 8px 14px; border-radius: 16px;
@@ -56,17 +57,17 @@ html, body {
 }
 
 /* Search */
-.search-wrap { position: relative; flex: 1; max-width: 240px; min-width: 120px; }
+.search-wrap { position: relative; flex: 0 1 220px; min-width: 130px; }
 .search-wrap input {
   width: 100%; background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--text-primary); padding: 6px 12px; border-radius: 999px; font-size: 0.83rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--text-primary); padding: 6px 12px; border-radius: 999px; font-size: 0.82rem;
   outline: none; transition: border-color 0.2s;
   user-select: text; -webkit-user-select: text;
 }
 .search-wrap input:focus { border-color: var(--manim-blue); }
 .search-results {
-  position: absolute; top: 38px; left: 0; right: 0; max-height: 320px; overflow-y: auto;
+  position: absolute; top: 38px; left: 0; right: 0; min-width: 260px; max-height: 320px; overflow-y: auto;
   background: #1b1e28; border: 1px solid var(--glass-border); border-radius: 12px;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65); z-index: 150; display: none;
   touch-action: pan-y;
@@ -79,32 +80,51 @@ html, body {
 .search-item:hover { background: rgba(88, 196, 221, 0.15); }
 .search-domain { font-size: 0.72rem; font-weight: 600; }
 
+/* Navigation + Klassenstufen-Filter direkt nebeneinander */
+.nav-and-filter {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+
 .breadcrumbs { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
 .crumb-btn {
-  background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 5px 10px; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 0.79rem;
-  color: var(--text-primary); transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 5px 11px; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 0.79rem;
+  color: var(--text-primary); transition: all 0.2s ease; white-space: nowrap;
 }
 .crumb-btn:hover { transform: translateY(-1px); background: rgba(255, 255, 255, 0.12); }
-.crumb-btn.active { background: rgba(255, 255, 255, 0.15); box-shadow: 0 0 14px rgba(255,255,255,0.14); }
+.crumb-btn.active {
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.18);
+  border-width: 1.5px;
+}
+.crumb-sep { color: var(--text-secondary); font-size: 0.82rem; opacity: 0.6; }
+.crumb-topic {
+  background: rgba(131, 193, 103, 0.16);
+  border-color: rgba(131, 193, 103, 0.55);
+  color: #e2f5d8;
+}
 
-/* Grade Filter in Header */
+/* Grade Filter Button/Pill direkt neben den Themen */
 .grade-filter-wrap {
   display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  padding: 4px 10px; border-radius: 999px;
+  background: rgba(88, 196, 221, 0.12);
+  border: 1.5px solid rgba(88, 196, 221, 0.45);
+  padding: 4px 11px; border-radius: 999px;
+  transition: all 0.2s ease;
 }
-.grade-label { font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; }
+.grade-icon { font-size: 0.76rem; color: var(--manim-blue); }
+.grade-label { font-size: 0.76rem; color: var(--manim-blue); font-weight: 700; white-space: nowrap; }
 .grade-select {
-  background: transparent; border: none; color: var(--text-primary);
-  font-size: 0.79rem; font-weight: 600; cursor: pointer; outline: none;
+  background: transparent; border: none; color: #fff;
+  font-size: 0.79rem; font-weight: 700; cursor: pointer; outline: none;
 }
 .grade-select option { background: #191c25; color: #f1f5f9; }
 .grade-filter-wrap.active-filter {
   border-color: var(--manim-green);
-  background: rgba(131, 193, 103, 0.14);
+  background: rgba(131, 193, 103, 0.22);
+  box-shadow: 0 0 14px rgba(131, 193, 103, 0.25);
 }
+.grade-filter-wrap.active-filter .grade-icon,
 .grade-filter-wrap.active-filter .grade-label { color: var(--manim-green); }
 
 .hud-actions { display: flex; align-items: center; gap: 8px; }
@@ -122,7 +142,7 @@ html, body {
 
 /* Admin Bar */
 .admin-bar {
-  position: fixed; top: 66px; left: 12px; right: 12px; z-index: 95;
+  position: fixed; top: 68px; left: 12px; right: 12px; z-index: 95;
   display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
   background: rgba(30, 27, 18, 0.92); backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -326,9 +346,19 @@ body.is-admin .node-edit-btn { display: inline-block; }
 body[data-zoom="micro"] .node.level-2.active-anchor {
   border: 2px solid var(--node-color);
   box-shadow: 0 0 38px -4px var(--node-color);
+  cursor: pointer;
+}
+body[data-zoom="micro"] .node.level-2.active-anchor::after {
+  content: "↩ Zurück zu Themen";
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--node-color);
+  opacity: 0.88;
 }
 
-/* Level 3 & 4: Atomic Knowledge Nodes (Weiterer Abstieg im Farbverlauf!) */
+/* Level 3 & 4: Atomic Knowledge Nodes */
 .node.level-3 {
   width: 325px; padding: 15px 17px; border-radius: 18px;
   background: linear-gradient(
@@ -453,8 +483,8 @@ body[data-zoom="micro"] .node.level-2.active-anchor {
 }
 
 @media (max-width: 960px) {
-  .hud-top { flex-wrap: wrap; padding: 8px 10px; }
-  .breadcrumbs { order: 3; width: 100%; justify-content: center; }
-  .admin-bar { top: 104px; }
+  .hud-top { padding: 8px 10px; }
+  .nav-and-filter { order: 3; width: 100%; justify-content: center; }
+  .admin-bar { top: 106px; }
   .form-row-3 { grid-template-columns: 1fr; }
 }

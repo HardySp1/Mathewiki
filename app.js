@@ -1,5 +1,9 @@
 let appData = { titleToId: {}, nodes: [] };
 let scale = 0.34, panX = 0, panY = 0;
+
+// Expliziter Ebenen-Zustand: Bleibt beim freien Zoomen fixiert, bis eine andere Ebene gewählt
+// oder die aktive Ebene erneut angeklickt (abgewählt) wird!
+let viewLevel = 'macro'; // 'macro' | 'meso' | 'micro'
 let activeDomainId = null;
 let activeTopicId = null;
 let maxGradeFilter = null; // null = Alle (5-Q2), sonst 5..13
@@ -104,17 +108,16 @@ async function init() {
 
 function setGradeFilter(val) {
   maxGradeFilter = val === 'all' ? null : parseInt(val, 10);
-  const wrap = document.querySelector('.grade-filter-wrap');
+  const wrap = document.getElementById('gradeFilterWrap');
   if (wrap) wrap.classList.toggle('active-filter', maxGradeFilter !== null);
 
-  // Wenn das aktuell gewählte Hauptgebiet oder Thema erst in einer höheren Stufe vorkommt, zurückspringen
   if (activeTopicId) {
     const top = appData.nodes.find(n => n.id === activeTopicId);
     if (top && !isNodeAllowedByGrade(top)) {
       activeTopicId = null;
       const dom = appData.nodes.find(n => n.id === activeDomainId);
       if (dom && isNodeAllowedByGrade(dom)) {
-        selectDomain(dom.id);
+        selectDomain(dom.id, true);
       } else {
         focusOverview();
       }
@@ -148,9 +151,29 @@ function buildDomainNav() {
     btn.textContent = d.title;
     btn.style.borderColor = d.color + '77';
     btn.style.color = d.color;
+    // Erneutes Klicken auf das bereits aktive Hauptgebiet wählt es wieder ab -> zurück zur Übersicht
     btn.onclick = () => selectDomain(d.id);
     nav.appendChild(btn);
   });
+
+  if (viewLevel === 'micro' && activeTopicId) {
+    const top = appData.nodes.find(n => n.id === activeTopicId);
+    if (top) {
+      const sep = document.createElement('span');
+      sep.className = 'crumb-sep';
+      sep.textContent = '›';
+      nav.appendChild(sep);
+
+      const topBtn = document.createElement('button');
+      topBtn.className = 'crumb-btn crumb-topic active';
+      topBtn.textContent = `${top.title} ✕`;
+      topBtn.title = 'Erneut klicken, um das Thema abzuwählen';
+      topBtn.style.borderColor = top.color;
+      topBtn.style.color = top.color;
+      topBtn.onclick = () => selectTopic(top.id);
+      nav.appendChild(topBtn);
+    }
+  }
 }
 
 function formatWikiText(rawText, truncate = false) {
@@ -256,7 +279,6 @@ function drawEdges(nodeMap) {
     const x2 = n.x + 6000, y2 = n.y + 6000;
     const d = buildBezierPath(x1, y1, x2, y2);
 
-    // SVG-Farbverlauf von der Farbe der oberen Ebene zur Farbe der tieferen Ebene
     const gradId = `grad-${p.id}-${n.id}`;
     const grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
     grad.setAttribute('id', gradId);
@@ -337,43 +359,23 @@ function getLevel1Ancestor(nodeId) {
   return null;
 }
 
-function findNearestNodeAtLevel(level, worldX, worldY) {
-  let best = null, bestDist = Infinity;
-  appData.nodes.filter(n => n.level === level && isNodeAllowedByGrade(n)).forEach(n => {
-    const d = Math.hypot(n.x - worldX, n.y - worldY);
-    if (d < bestDist) { bestDist = d; best = n; }
-  });
-  return best;
-}
-
 function applyVisibilityFilter() {
-  const mode = document.body.getAttribute('data-zoom') || 'macro';
+  document.body.setAttribute('data-zoom', viewLevel);
   const visibleIds = new Set();
 
   if (showAllAdmin && isAdmin) {
     appData.nodes.forEach(n => {
       if (isNodeAllowedByGrade(n)) visibleIds.add(n.id);
     });
-  } else if (mode === 'macro') {
+  } else if (viewLevel === 'macro') {
     appData.nodes.filter(n => n.level === 1 && isNodeAllowedByGrade(n)).forEach(n => visibleIds.add(n.id));
-  } else if (mode === 'meso') {
-    const centerWorldX = -panX / scale;
-    const centerWorldY = -panY / scale;
-    const domain = (activeDomainId && appData.nodes.find(n => n.id === activeDomainId && isNodeAllowedByGrade(n)))
-      || findNearestNodeAtLevel(1, centerWorldX, centerWorldY);
-    if (domain) {
-      activeDomainId = domain.id;
-      appData.nodes
-        .filter(n => n.level === 2 && n.parentId === domain.id && isNodeAllowedByGrade(n))
-        .forEach(n => visibleIds.add(n.id));
-    }
-  } else if (mode === 'micro') {
-    const centerWorldX = -panX / scale;
-    const centerWorldY = -panY / scale;
-    const topic = (activeTopicId && appData.nodes.find(n => n.id === activeTopicId && isNodeAllowedByGrade(n)))
-      || findNearestNodeAtLevel(2, centerWorldX, centerWorldY);
+  } else if (viewLevel === 'meso' && activeDomainId) {
+    appData.nodes
+      .filter(n => n.level === 2 && n.parentId === activeDomainId && isNodeAllowedByGrade(n))
+      .forEach(n => visibleIds.add(n.id));
+  } else if (viewLevel === 'micro' && activeTopicId) {
+    const topic = appData.nodes.find(n => n.id === activeTopicId && isNodeAllowedByGrade(n));
     if (topic) {
-      activeTopicId = topic.id;
       activeDomainId = topic.parentId;
       visibleIds.add(topic.id);
       appData.nodes.forEach(n => {
@@ -389,7 +391,7 @@ function applyVisibilityFilter() {
     if (!el) return;
     const isVis = visibleIds.has(n.id);
     el.classList.toggle('node-hidden', !isVis);
-    el.classList.toggle('active-anchor', mode === 'micro' && n.id === activeTopicId);
+    el.classList.toggle('active-anchor', viewLevel === 'micro' && n.id === activeTopicId);
   });
 
   document.querySelectorAll('.edge-path, .edge-flow').forEach(path => {
@@ -397,17 +399,17 @@ function applyVisibilityFilter() {
     path.classList.toggle('edge-hidden', !bothVisible);
   });
 
+  buildDomainNav();
   updateHudContext();
 }
 
 function updateHudContext() {
-  const mode = document.body.getAttribute('data-zoom') || 'macro';
   const indicator = document.getElementById('zoom-indicator');
   const brandDot = document.getElementById('brandDot');
 
   document.querySelectorAll('.crumb-btn').forEach(b => b.classList.remove('active'));
 
-  if (mode === 'macro') {
+  if (viewLevel === 'macro') {
     indicator.textContent = 'Ebene 1: Übersicht';
     indicator.style.color = '#58C4DD';
     indicator.style.borderColor = 'rgba(88,196,221,0.3)';
@@ -418,7 +420,7 @@ function updateHudContext() {
   } else {
     const dom = appData.nodes.find(n => n.id === activeDomainId);
     const top = appData.nodes.find(n => n.id === activeTopicId);
-    const activeNode = (mode === 'micro' && top) ? top : dom;
+    const activeNode = (viewLevel === 'micro' && top) ? top : dom;
     const col = activeNode ? activeNode.color : '#58C4DD';
 
     brandDot.style.background = col;
@@ -431,7 +433,7 @@ function updateHudContext() {
       if (cb) cb.classList.add('active');
     }
 
-    if (mode === 'meso') {
+    if (viewLevel === 'meso') {
       indicator.textContent = dom ? `${dom.title} · Themengebiete` : 'Themengebiete';
     } else {
       indicator.textContent = top ? `${dom ? dom.title + ' › ' : ''}${top.title}` : 'Lernbausteine';
@@ -448,15 +450,11 @@ function syncInfiniteGrid() {
   viewport.style.backgroundPosition = `${cx}px ${cy}px, ${cx}px ${cy}px, ${cx}px ${cy}px, ${cx}px ${cy}px`;
 }
 
+// Zooming ändert ausschließlich die Darstellung (scale, panX, panY),
+// wechselt aber NICHT mehr ungewollt die ausgewählte Ebene!
 function updateTransform() {
   world.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
   syncInfiniteGrid();
-
-  let mode = 'macro';
-  if (scale >= 0.56 && scale < 0.90) mode = 'meso';
-  else if (scale >= 0.90) mode = 'micro';
-  document.body.setAttribute('data-zoom', mode);
-  applyVisibilityFilter();
 }
 
 function getInitialOverviewScale() {
@@ -469,28 +467,46 @@ function focusAt(worldX, worldY, targetScale) {
   panX = -worldX * scale;
   panY = -worldY * scale;
   updateTransform();
+  applyVisibilityFilter();
 }
 
 function focusOverview() {
+  viewLevel = 'macro';
   activeDomainId = null;
   activeTopicId = null;
   focusAt(0, 0, getInitialOverviewScale());
 }
 
-function selectDomain(domainId) {
+function selectDomain(domainId, forceSelect = false) {
+  // Erneutes Klicken auf das bereits aktive Hauptgebiet (in Ebene 2) wählt es ab -> zurück zur Übersicht
+  if (!forceSelect && viewLevel === 'meso' && activeDomainId === domainId) {
+    focusOverview();
+    return;
+  }
   const d = appData.nodes.find(n => n.id === domainId);
   if (!d) return;
+  viewLevel = 'meso';
   activeDomainId = d.id;
   activeTopicId = null;
   focusAt(d.x, d.y, 0.72);
 }
 
-function selectTopic(topicId) {
+function selectTopic(topicId, forceSelect = false) {
+  // Erneutes Klicken auf das bereits aktive Thema wählt es ab -> zurück zur Themenübersicht des Hauptgebiets
+  if (!forceSelect && viewLevel === 'micro' && activeTopicId === topicId) {
+    const parentDomId = activeDomainId;
+    if (parentDomId) {
+      selectDomain(parentDomId, true);
+    } else {
+      focusOverview();
+    }
+    return;
+  }
   const t = appData.nodes.find(n => n.id === topicId);
   if (!t) return;
+  viewLevel = 'micro';
   activeTopicId = t.id;
   activeDomainId = t.parentId;
-  // Zentriert leicht rechts vom Themen-Anker, damit das Links-nach-Rechts-Baumraster optimal im Bild liegt
   focusAt(t.x + 280, t.y, 0.95);
 }
 
@@ -501,17 +517,17 @@ function jumpToNode(nodeId) {
     maxGradeFilter = null;
     const sel = document.getElementById('gradeSelect');
     if (sel) sel.value = 'all';
-    const wrap = document.querySelector('.grade-filter-wrap');
+    const wrap = document.getElementById('gradeFilterWrap');
     if (wrap) wrap.classList.remove('active-filter');
-    buildDomainNav();
   }
   if (n.level === 1) {
-    selectDomain(n.id);
+    selectDomain(n.id, true);
   } else if (n.level === 2) {
-    selectTopic(n.id);
+    selectTopic(n.id, true);
   } else {
     const top = getLevel2Ancestor(n.id);
     const dom = getLevel1Ancestor(n.id);
+    viewLevel = 'micro';
     if (top) activeTopicId = top.id;
     if (dom) activeDomainId = dom.id;
     focusAt(n.x, n.y, 1.05);
@@ -526,7 +542,7 @@ function jumpToNode(nodeId) {
 }
 
 function zoomAroundScreenPoint(factor, screenX, screenY) {
-  const nextScale = Math.min(2.4, Math.max(0.18, scale * factor));
+  const nextScale = Math.min(2.6, Math.max(0.16, scale * factor));
   if (nextScale === scale) return;
 
   const halfW = viewport.clientWidth / 2;
@@ -536,17 +552,6 @@ function zoomAroundScreenPoint(factor, screenX, screenY) {
 
   const worldX = (offsetX - panX) / scale;
   const worldY = (offsetY - panY) / scale;
-
-  const centerWorldX = -panX / scale;
-  const centerWorldY = -panY / scale;
-  if (scale < 0.56 && nextScale >= 0.56 && !activeDomainId) {
-    const nearestDom = findNearestNodeAtLevel(1, centerWorldX, centerWorldY);
-    if (nearestDom) activeDomainId = nearestDom.id;
-  }
-  if (scale < 0.90 && nextScale >= 0.90 && !activeTopicId) {
-    const nearestTop = findNearestNodeAtLevel(2, centerWorldX, centerWorldY);
-    if (nearestTop) activeTopicId = nearestTop.id;
-  }
 
   scale = nextScale;
   panX = offsetX - worldX * scale;
@@ -878,10 +883,9 @@ function toggleShowAll(checked) {
   applyVisibilityFilter();
 }
 
-// Admin-Helfer: Aktives Cluster hierarchisch von links nach rechts im Baumraster ausrichten
 function autoArrangeActiveCluster() {
   if (!activeTopicId) {
-    showToast('Bitte zuerst in ein Themengebiet (Ebene 3) hineinzoomen');
+    showToast('Bitte zuerst ein Themengebiet (Ebene 3) auswählen');
     return;
   }
   const topic = appData.nodes.find(n => n.id === activeTopicId);
@@ -931,7 +935,6 @@ function autoArrangeActiveCluster() {
   showToast('Cluster hierarchisch ausgerichtet');
 }
 
-// Drag & Drop für Bausteine im Admin-Modus
 function attachAdminDrag(el, nodeObj) {
   let dragging = false, startMouseX = 0, startMouseY = 0, origX = 0, origY = 0;
 
@@ -1106,7 +1109,6 @@ function saveNodeFromEditor(e) {
     });
   }
 
-  buildDomainNav();
   renderAll();
   closeModal('editorModal');
   showToast('Änderung übernommen – mit „Auf GitHub speichern“ sichern');

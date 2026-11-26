@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=6" />
 </head>
 <body data-zoom="macro">
 
@@ -22,22 +22,25 @@
       <div id="searchResults" class="search-results"></div>
     </div>
 
-    <nav class="breadcrumbs" id="domainNav"></nav>
+    <div class="nav-and-filter">
+      <nav class="breadcrumbs" id="domainNav"></nav>
 
-    <div class="grade-filter-wrap" title="Lerninhalte nach NRW-Kernlehrplan bis zur gewählten Klassenstufe filtern">
-      <label for="gradeSelect" class="grade-label">Stufe:</label>
-      <select id="gradeSelect" class="grade-select" onchange="setGradeFilter(this.value)">
-        <option value="all">Alle (5–Q2)</option>
-        <option value="5">Bis Klasse 5</option>
-        <option value="6">Bis Klasse 6</option>
-        <option value="7">Bis Klasse 7</option>
-        <option value="8">Bis Klasse 8</option>
-        <option value="9">Bis Klasse 9</option>
-        <option value="10">Bis Klasse 10</option>
-        <option value="11">Bis EF (Kl. 11)</option>
-        <option value="12">Bis Q1 (Kl. 12)</option>
-        <option value="13">Bis Q2 (Kl. 13)</option>
-      </select>
+      <div class="grade-filter-wrap" id="gradeFilterWrap" title="Lerninhalte nach NRW-Kernlehrplan bis zur gewählten Klassenstufe filtern">
+        <span class="grade-icon" aria-hidden="true">&#9776;</span>
+        <label for="gradeSelect" class="grade-label">Stufe:</label>
+        <select id="gradeSelect" class="grade-select" onchange="setGradeFilter(this.value)">
+          <option value="all">Alle (5–Q2)</option>
+          <option value="5">Bis Klasse 5</option>
+          <option value="6">Bis Klasse 6</option>
+          <option value="7">Bis Klasse 7</option>
+          <option value="8">Bis Klasse 8</option>
+          <option value="9">Bis Klasse 9</option>
+          <option value="10">Bis Klasse 10</option>
+          <option value="11">Bis EF (Kl. 11)</option>
+          <option value="12">Bis Q1 (Kl. 12)</option>
+          <option value="13">Bis Q2 (Kl. 13)</option>
+        </select>
+      </div>
     </div>
 
     <div class="hud-actions">
@@ -205,6 +208,6 @@
 
   <div id="toast" class="toast hidden"></div>
 
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>
