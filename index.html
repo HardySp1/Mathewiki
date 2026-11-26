@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mathe-Wissensraum</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="styles.css?v=4" />
+</head>
+<body data-zoom="macro">
+
+  <header class="hud-top">
+    <div class="brand" onclick="focusOverview()" title="Zur Gesamtübersicht">
+      <span class="brand-dot" id="brandDot"></span>
+      <span>Mathe-Wissensraum</span>
+    </div>
+
+    <div class="search-wrap">
+      <input type="search" id="searchInput" placeholder="Thema, Formel oder Begriff suchen..." autocomplete="off" />
+      <div id="searchResults" class="search-results"></div>
+    </div>
+
+    <nav class="breadcrumbs" id="domainNav"></nav>
+
+    <div class="hud-actions">
+      <span id="zoom-indicator" class="zoom-pill">Übersicht</span>
+      <button id="adminLoginBtn" class="admin-btn" onclick="openAdminAuth()">Admin</button>
+    </div>
+  </header>
+
+  <!-- Admin-Aktionsleiste -->
+  <div id="adminBar" class="admin-bar hidden">
+    <span class="admin-status">● Admin-Modus aktiv (Drag &amp; Drop zum Verschieben)</span>
+    <div class="admin-bar-btns">
+      <label class="admin-check">
+        <input type="checkbox" id="showAllToggle" onchange="toggleShowAll(this.checked)" />
+        Alle Ebenen einblenden
+      </label>
+      <button class="btn-secondary" onclick="autoArrangeActiveCluster()" title="Aktuelles Themen-Cluster sauber im Raster ausrichten">Cluster aufräumen</button>
+      <button class="btn-secondary" onclick="openNodeEditor(null)">+ Neuer Baustein</button>
+      <button class="btn-secondary" onclick="exportVaultString()" title="Verschlüsselten Zugang für Zweitgerät kopieren">Geräte-Sync</button>
+      <button id="saveGithubBtn" class="btn-primary" onclick="saveToGitHub()">Auf GitHub speichern</button>
+      <button class="btn-ghost" onclick="logoutAdmin()">Logout</button>
+    </div>
+  </div>
+
+  <main id="viewport">
+    <div id="world">
+      <svg id="edges"></svg>
+      <div id="nodesLayer"></div>
+    </div>
+  </main>
+
+  <div class="zoom-controls">
+    <button onclick="stepZoom(1.25)" title="Reinzoomen">+</button>
+    <button onclick="stepZoom(0.8)" title="Rauszoomen">&minus;</button>
+    <button onclick="focusOverview()" title="Zur Gesamtübersicht">&#8962;</button>
+  </div>
+
+  <!-- Medien- & Detail-Modal -->
+  <div id="mediaModal" class="modal-backdrop" onclick="if(event.target===this) closeModal('mediaModal')">
+    <div class="modal-card modal-large">
+      <div class="modal-header">
+        <div>
+          <span id="m-badge" class="modal-badge">Interaktiv</span>
+          <h3 id="m-title">Titel</h3>
+        </div>
+        <button class="crumb-btn" onclick="closeModal('mediaModal')">Schließen &times;</button>
+      </div>
+      <div id="m-body" class="modal-frame"></div>
+    </div>
+  </div>
+
+  <!-- Admin-Login Modal -->
+  <div id="authModal" class="modal-backdrop" onclick="if(event.target===this) closeModal('authModal')">
+    <div class="modal-card modal-small">
+      <div class="modal-header">
+        <h3 id="authModalTitle">Admin-Login</h3>
+        <button class="crumb-btn" onclick="closeModal('authModal')">&times;</button>
+      </div>
+
+      <form id="unlockForm" class="editor-form hidden" onsubmit="handleVaultUnlock(event)">
+        <p class="form-hint">Dein GitHub-Zugang ist verschlüsselt hinterlegt. Gib dein Admin-Passwort ein:</p>
+        <label>Admin-Passwort
+          <input type="password" id="unlockPassword" placeholder="Dein Passwort..." required autocomplete="current-password" />
+        </label>
+        <div class="form-actions space-between">
+          <button type="button" class="btn-ghost" onclick="switchAuthView('setup')">Token neu hinterlegen</button>
+          <button type="submit" class="btn-primary">Entsperren</button>
+        </div>
+      </form>
+
+      <form id="setupForm" class="editor-form" onsubmit="handleVaultSetup(event)">
+        <p class="form-hint">Hinterlege dein GitHub-Token <strong>einmalig</strong> mit einem eigenen kurzen Passwort. Danach meldest du dich nur noch mit diesem Passwort an.</p>
+        <div class="form-row">
+          <label>GitHub-User
+            <input type="text" id="ghOwner" value="hardysp1" required />
+          </label>
+          <label>Repository
+            <input type="text" id="ghRepo" value="Mathewiki" required />
+          </label>
+        </div>
+        <div class="form-row">
+          <label>GitHub Token (PAT)
+            <input type="password" id="ghToken" placeholder="github_pat_..." required />
+          </label>
+          <label>Branch
+            <input type="text" id="ghBranch" value="main" required />
+          </label>
+        </div>
+        <label>Eigenes Admin-Passwort festlegen
+          <input type="password" id="newVaultPassword" placeholder="Kurzes Merkwort / PIN..." required autocomplete="new-password" />
+        </label>
+        <div class="form-actions space-between">
+          <button type="button" class="btn-ghost" onclick="importVaultPrompt()">Sync-Code importieren</button>
+          <button type="submit" class="btn-primary">Speichern &amp; Freischalten</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Baustein-Editor Modal -->
+  <div id="editorModal" class="modal-backdrop" onclick="if(event.target===this) closeModal('editorModal')">
+    <div class="modal-card modal-medium">
+      <div class="modal-header">
+        <h3 id="ed-heading">Baustein bearbeiten</h3>
+        <button class="crumb-btn" onclick="closeModal('editorModal')">&times;</button>
+      </div>
+      <form id="nodeEditorForm" class="editor-form" onsubmit="saveNodeFromEditor(event)">
+        <input type="hidden" id="ed-id" />
+        <div class="form-row">
+          <label>Titel
+            <input type="text" id="ed-title" required />
+          </label>
+          <label id="ed-level-wrap">Ebene
+            <select id="ed-level" onchange="toggleParentSelectVisibility()">
+              <option value="1">Ebene 1 (Hauptgebiet-Kreis)</option>
+              <option value="2">Ebene 2 (Themengebiet)</option>
+              <option value="3" selected>Ebene 3 (Lernbaustein)</option>
+            </select>
+          </label>
+        </div>
+        <label id="ed-parent-wrap">Übergeordneter Knoten (Cluster-Anker)
+          <select id="ed-parent"></select>
+        </label>
+        <label>Inhalt &amp; Formeln (LaTeX mit $$...$$ oder $...$, Links mit [[Titel]])
+          <textarea id="ed-text" rows="5" placeholder="Erklärungstext und Formeln..."></textarea>
+        </label>
+
+        <div class="media-editor-section">
+          <div class="section-head">
+            <strong>GeoGebra-Applets</strong>
+            <button type="button" class="chip ggb" onclick="addMediaRow('ggb')">+ Applet</button>
+          </div>
+          <div id="ed-ggb-list" class="media-rows"></div>
+        </div>
+
+        <div class="media-editor-section">
+          <div class="section-head">
+            <strong>Videos (Grundlagen &amp; Beispielaufgaben)</strong>
+            <button type="button" class="chip vid-base" onclick="addMediaRow('vid-base')">+ Grundlagenvideo</button>
+            <button type="button" class="chip vid-ex" onclick="addMediaRow('vid-ex')">+ Beispielrechnung</button>
+          </div>
+          <div id="ed-vid-list" class="media-rows"></div>
+        </div>
+
+        <div class="form-actions space-between">
+          <button type="button" id="ed-delete-btn" class="btn-danger" onclick="deleteCurrentNode()">Baustein löschen</button>
+          <button type="submit" class="btn-primary">Übernehmen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js?v=4"></script>
+</body>
+</html>
