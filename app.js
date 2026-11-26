@@ -182,8 +182,7 @@ function createSafePreview(rawText, maxChars) {
 
   // Finde geschützte Blöcke ($$...$$, $...$, [[...]])
   const protectedRanges = [];
-  const tokenRegex = /(\$\$[\s\S]*?\$\$|\$[^$
-]+?\$|\[\[[^\]]+?\]\])/g;
+  const tokenRegex = /(\$\$[\s\S]*?\$\$|\$[^$\n]+?\$|\[\[[^\]]+?\]\])/g;
   let m;
   while ((m = tokenRegex.exec(clean)) !== null) {
     protectedRanges.push([m.index, m.index + m[0].length]);

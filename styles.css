@@ -1,6 +1,6 @@
 :root {
   /* Warm, calm Apple-inspired dark surfaces (no cold technical blue-black) */
-  --canvas-bg: #171719;
+  --canvas-bg: #1B1B1E;
   --canvas-glow: rgba(255, 248, 238, 0.025);
   --dot-minor: rgba(245, 242, 235, 0.075);
   --dot-major: rgba(245, 242, 235, 0.16);
