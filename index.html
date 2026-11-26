@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-  <link rel="stylesheet" href="styles.css?v=6" />
+  <link rel="stylesheet" href="styles.css?v=7" />
 </head>
 <body data-zoom="macro">
 
@@ -18,7 +18,7 @@
     </div>
 
     <div class="search-wrap">
-      <input type="search" id="searchInput" placeholder="Thema, Formel oder Begriff suchen..." autocomplete="off" />
+      <input type="search" id="searchInput" placeholder="Suchen…" autocomplete="off" />
       <div id="searchResults" class="search-results"></div>
     </div>
 
@@ -26,8 +26,7 @@
       <nav class="breadcrumbs" id="domainNav"></nav>
 
       <div class="grade-filter-wrap" id="gradeFilterWrap" title="Lerninhalte nach NRW-Kernlehrplan bis zur gewählten Klassenstufe filtern">
-        <span class="grade-icon" aria-hidden="true">&#9776;</span>
-        <label for="gradeSelect" class="grade-label">Stufe:</label>
+        <label for="gradeSelect" class="grade-label">Stufe</label>
         <select id="gradeSelect" class="grade-select" onchange="setGradeFilter(this.value)">
           <option value="all">Alle (5–Q2)</option>
           <option value="5">Bis Klasse 5</option>
@@ -44,24 +43,24 @@
     </div>
 
     <div class="hud-actions">
-      <span id="zoom-indicator" class="zoom-pill">Ebene 1: Übersicht</span>
+      <span id="zoom-indicator" class="zoom-pill">Übersicht</span>
       <button id="adminLoginBtn" class="admin-btn" onclick="openAdminAuth()">Admin</button>
     </div>
   </header>
 
   <!-- Admin-Aktionsleiste -->
   <div id="adminBar" class="admin-bar hidden">
-    <span class="admin-status">● Admin-Modus aktiv (Drag &amp; Drop zum Verschieben)</span>
+    <span class="admin-status">● Bearbeitungsmodus · Karten frei verschieben</span>
     <div class="admin-bar-btns">
       <label class="admin-check">
         <input type="checkbox" id="showAllToggle" onchange="toggleShowAll(this.checked)" />
-        Alle Ebenen einblenden
+        Alle Ebenen
       </label>
-      <button class="btn-secondary" onclick="autoArrangeActiveCluster()" title="Aktuelles Themen-Cluster sauber im Baumraster ausrichten">Cluster aufräumen</button>
-      <button class="btn-secondary" onclick="openNodeEditor(null)">+ Neuer Baustein</button>
+      <button class="btn-secondary" onclick="autoArrangeActiveCluster()" title="Aktuelles Themen-Cluster sauber ausrichten">Cluster ordnen</button>
+      <button class="btn-secondary" onclick="openNodeEditor(null)">+ Baustein</button>
       <button class="btn-secondary" onclick="exportVaultString()" title="Verschlüsselten Zugang für Zweitgerät kopieren">Geräte-Sync</button>
-      <button id="saveGithubBtn" class="btn-primary" onclick="saveToGitHub()">Auf GitHub speichern</button>
-      <button class="btn-ghost" onclick="logoutAdmin()">Logout</button>
+      <button id="saveGithubBtn" class="btn-primary" onclick="saveToGitHub()">Veröffentlichen</button>
+      <button class="btn-ghost" onclick="logoutAdmin()">Fertig</button>
     </div>
   </div>
 
@@ -73,22 +72,28 @@
   </main>
 
   <div class="zoom-controls">
-    <button onclick="stepZoom(1.25)" title="Reinzoomen">+</button>
-    <button onclick="stepZoom(0.8)" title="Rauszoomen">&minus;</button>
-    <button onclick="focusOverview()" title="Zur Gesamtübersicht">&#8962;</button>
+    <button onclick="stepZoom(1.22)" title="Vergrößern">+</button>
+    <button onclick="stepZoom(0.82)" title="Verkleinern">&minus;</button>
+    <button onclick="focusOverview()" title="Gesamtübersicht">&#8962;</button>
   </div>
 
-  <!-- Medien- & Detail-Modal -->
+  <!-- Apple-Style Reader & Medien Sheet -->
   <div id="mediaModal" class="modal-backdrop" onclick="if(event.target===this) closeModal('mediaModal')">
-    <div class="modal-card modal-large">
+    <div class="modal-card modal-reader">
       <div class="modal-header">
-        <div>
-          <span id="m-badge" class="modal-badge">Interaktiv</span>
+        <div class="modal-title-group">
+          <div class="modal-meta-line">
+            <span id="m-badge" class="modal-badge">Lernbaustein</span>
+            <span id="m-grade" class="modal-grade-pill">ab Kl. 5</span>
+          </div>
           <h3 id="m-title">Titel</h3>
         </div>
-        <button class="crumb-btn" onclick="closeModal('mediaModal')">Schließen &times;</button>
+        <div class="modal-header-actions">
+          <button id="m-edit-shortcut" class="btn-secondary hidden" onclick="editFromReader()">Bearbeiten</button>
+          <button class="modal-close-btn" onclick="closeModal('mediaModal')" aria-label="Schließen">&times;</button>
+        </div>
       </div>
-      <div id="m-body" class="modal-frame"></div>
+      <div id="m-body" class="modal-reader-body"></div>
     </div>
   </div>
 
@@ -97,13 +102,13 @@
     <div class="modal-card modal-small">
       <div class="modal-header">
         <h3 id="authModalTitle">Admin-Login</h3>
-        <button class="crumb-btn" onclick="closeModal('authModal')">&times;</button>
+        <button class="modal-close-btn" onclick="closeModal('authModal')">&times;</button>
       </div>
 
       <form id="unlockForm" class="editor-form hidden" onsubmit="handleVaultUnlock(event)">
         <p class="form-hint">Dein GitHub-Zugang ist verschlüsselt hinterlegt. Gib dein Admin-Passwort ein:</p>
         <label>Admin-Passwort
-          <input type="password" id="unlockPassword" placeholder="Dein Passwort..." required autocomplete="current-password" />
+          <input type="password" id="unlockPassword" placeholder="Dein Passwort…" required autocomplete="current-password" />
         </label>
         <div class="form-actions space-between">
           <button type="button" class="btn-ghost" onclick="switchAuthView('setup')">Token neu hinterlegen</button>
@@ -123,14 +128,14 @@
         </div>
         <div class="form-row">
           <label>GitHub Token (PAT)
-            <input type="password" id="ghToken" placeholder="github_pat_..." required />
+            <input type="password" id="ghToken" placeholder="github_pat_…" required />
           </label>
           <label>Branch
             <input type="text" id="ghBranch" value="main" required />
           </label>
         </div>
         <label>Eigenes Admin-Passwort festlegen
-          <input type="password" id="newVaultPassword" placeholder="Kurzes Merkwort / PIN..." required autocomplete="new-password" />
+          <input type="password" id="newVaultPassword" placeholder="Kurzes Merkwort / PIN…" required autocomplete="new-password" />
         </label>
         <div class="form-actions space-between">
           <button type="button" class="btn-ghost" onclick="importVaultPrompt()">Sync-Code importieren</button>
@@ -145,7 +150,7 @@
     <div class="modal-card modal-medium">
       <div class="modal-header">
         <h3 id="ed-heading">Baustein bearbeiten</h3>
-        <button class="crumb-btn" onclick="closeModal('editorModal')">&times;</button>
+        <button class="modal-close-btn" onclick="closeModal('editorModal')">&times;</button>
       </div>
       <form id="nodeEditorForm" class="editor-form" onsubmit="saveNodeFromEditor(event)">
         <input type="hidden" id="ed-id" />
@@ -174,11 +179,11 @@
             </select>
           </label>
         </div>
-        <label id="ed-parent-wrap">Übergeordneter Knoten (Cluster-Anker)
+        <label id="ed-parent-wrap">Übergeordneter Knoten
           <select id="ed-parent"></select>
         </label>
-        <label>Inhalt &amp; Formeln (LaTeX mit $$...$$ oder $...$, Links mit [[Titel]])
-          <textarea id="ed-text" rows="5" placeholder="Erklärungstext und Formeln..."></textarea>
+        <label>Inhalt &amp; Formeln (LaTeX mit $$…$$ oder $…$, Verweise mit [[Titel]])
+          <textarea id="ed-text" rows="6" placeholder="Erklärungstext und Formeln…"></textarea>
         </label>
 
         <div class="media-editor-section">
@@ -199,7 +204,7 @@
         </div>
 
         <div class="form-actions space-between">
-          <button type="button" id="ed-delete-btn" class="btn-danger" onclick="deleteCurrentNode()">Baustein löschen</button>
+          <button type="button" id="ed-delete-btn" class="btn-danger" onclick="deleteCurrentNode()">Löschen</button>
           <button type="submit" class="btn-primary">Übernehmen</button>
         </div>
       </form>
@@ -208,6 +213,6 @@
 
   <div id="toast" class="toast hidden"></div>
 
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

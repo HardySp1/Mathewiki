@@ -2,10 +2,11 @@ let appData = { titleToId: {}, nodes: [] };
 let scale = 0.34, panX = 0, panY = 0;
 
 // Expliziter Ebenen-Zustand: Bleibt beim freien Zoomen fixiert, bis eine andere Ebene gewählt
-// oder die aktive Ebene erneut angeklickt (abgewählt) wird!
+// oder die aktive Ebene erneut angeklickt (abgewählt) wird.
 let viewLevel = 'macro'; // 'macro' | 'meso' | 'micro'
 let activeDomainId = null;
 let activeTopicId = null;
+let activeReaderNodeId = null;
 let maxGradeFilter = null; // null = Alle (5-Q2), sonst 5..13
 let showAllAdmin = false;
 
@@ -13,11 +14,11 @@ let isAdmin = false;
 let ghConfig = null;
 
 const DOMAIN_IDS = new Set(['arithmetik-algebra', 'geometrie', 'analysis', 'stochastik']);
-const DOMAIN_PALETTES = {
-  'arithmetik-algebra': ['#58C4DD', '#479FE3', '#687EE8', '#8D6CE8'],
-  'geometrie':          ['#3CC4B2', '#52C88A', '#83C167', '#ACD654'],
-  'analysis':           ['#F4D345', '#F2A33C', '#EE7747', '#FC6255'],
-  'stochastik':         ['#9A72AC', '#B96BA8', '#D56A95', '#E87580']
+const APPLE_DOMAIN_PALETTES = {
+  'arithmetik-algebra': ['#64B5F6', '#799CF2', '#9586E8', '#B07CE0'],
+  'geometrie':          ['#5AC8B0', '#6CC490', '#88BE74', '#A8BA63'],
+  'analysis':           ['#F2C95C', '#F0A65A', '#EB8663', '#E36D6D'],
+  'stochastik':         ['#A982C4', '#C27FB3', '#D6809F', '#E28A8E']
 };
 
 const VAULT_STORAGE_KEY = 'mw_encrypted_vault_v1';
@@ -72,7 +73,7 @@ function enrichNodeHierarchyAndColors() {
     const depth = computeDepth(n, nodeMap);
     n.depth = depth;
     const rootId = getDomainRootId(n, nodeMap);
-    const palette = DOMAIN_PALETTES[rootId] || DOMAIN_PALETTES['arithmetik-algebra'];
+    const palette = APPLE_DOMAIN_PALETTES[rootId] || APPLE_DOMAIN_PALETTES['arithmetik-algebra'];
     const dIdx = Math.min(palette.length - 1, Math.max(0, depth - 1));
     const pIdx = Math.max(0, dIdx - 1);
     n.color = palette[dIdx];
@@ -137,7 +138,7 @@ function setGradeFilter(val) {
   buildDomainNav();
   applyVisibilityFilter();
   if (maxGradeFilter !== null) {
-    showToast(`Filter aktiv: Lerninhalte bis ${val === '11' ? 'EF' : val === '12' ? 'Q1' : val === '13' ? 'Q2' : 'Klasse ' + val}`);
+    showToast(`Stufenfilter: Bis ${val === '11' ? 'EF' : val === '12' ? 'Q1' : val === '13' ? 'Q2' : 'Klasse ' + val}`);
   }
 }
 
@@ -149,9 +150,7 @@ function buildDomainNav() {
     btn.className = 'crumb-btn';
     btn.id = 'crumb-' + d.id;
     btn.textContent = d.title;
-    btn.style.borderColor = d.color + '77';
     btn.style.color = d.color;
-    // Erneutes Klicken auf das bereits aktive Hauptgebiet wählt es wieder ab -> zurück zur Übersicht
     btn.onclick = () => selectDomain(d.id);
     nav.appendChild(btn);
   });
@@ -168,7 +167,6 @@ function buildDomainNav() {
       topBtn.className = 'crumb-btn crumb-topic active';
       topBtn.textContent = `${top.title} ✕`;
       topBtn.title = 'Erneut klicken, um das Thema abzuwählen';
-      topBtn.style.borderColor = top.color;
       topBtn.style.color = top.color;
       topBtn.onclick = () => selectTopic(top.id);
       nav.appendChild(topBtn);
@@ -176,11 +174,45 @@ function buildDomainNav() {
   }
 }
 
-function formatWikiText(rawText, truncate = false) {
+// Kürzt Vorschautexte sauber, ohne mitten in LaTeX-Formeln ($$...$$) oder [[Links]] abzuschneiden
+function createSafePreview(rawText, maxChars) {
+  if (!rawText) return { text: '', wasTruncated: false };
+  const clean = rawText.trim();
+  if (clean.length <= maxChars) return { text: clean, wasTruncated: false };
+
+  // Finde geschützte Blöcke ($$...$$, $...$, [[...]])
+  const protectedRanges = [];
+  const tokenRegex = /(\$\$[\s\S]*?\$\$|\$[^$
+]+?\$|\[\[[^\]]+?\]\])/g;
+  let m;
+  while ((m = tokenRegex.exec(clean)) !== null) {
+    protectedRanges.push([m.index, m.index + m[0].length]);
+  }
+
+  let cut = maxChars;
+  for (const [start, end] of protectedRanges) {
+    if (cut > start && cut < end) {
+      // Wenn ein geschützter Block noch sinnvoll passt, bis nach dem Block schneiden, sonst davor
+      cut = (end <= maxChars + 85) ? end : start;
+      break;
+    }
+  }
+
+  if (cut < 40) cut = maxChars;
+  const sub = clean.slice(0, cut);
+  const lastSpace = sub.lastIndexOf(' ');
+  const finalSlice = (lastSpace > 45 && cut < clean.length) ? sub.slice(0, lastSpace) : sub;
+  return {
+    text: finalSlice.trim() + (finalSlice.trim().length < clean.length ? ' …' : ''),
+    wasTruncated: finalSlice.trim().length < clean.length
+  };
+}
+
+function formatWikiText(rawText, previewLimit = null) {
   if (!rawText) return '';
-  let text = rawText;
-  if (truncate && text.length > 200) {
-    text = text.slice(0, 200) + '…';
+  let text = rawText.trim();
+  if (previewLimit !== null) {
+    text = createSafePreview(text, previewLimit).text;
   }
   text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   text = text.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, label, target) => {
@@ -216,6 +248,12 @@ function buildBezierPath(x1, y1, x2, y2) {
   return `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`;
 }
 
+function hasReadableContent(node) {
+  const hasText = Boolean(node.text && node.text.trim().length > 0);
+  const hasMedia = Boolean(node.media && node.media.length > 0);
+  return hasText || hasMedia;
+}
+
 function renderAll() {
   enrichNodeHierarchyAndColors();
   nodesLayer.innerHTML = '';
@@ -227,8 +265,8 @@ function renderAll() {
     el.id = 'el-' + n.id;
     el.style.left = n.x + 'px';
     el.style.top = n.y + 'px';
-    el.style.setProperty('--node-color', n.color || '#58C4DD');
-    el.style.setProperty('--parent-color', n.parentColor || n.color || '#58C4DD');
+    el.style.setProperty('--node-color', n.color || '#64B5F6');
+    el.style.setProperty('--parent-color', n.parentColor || n.color || '#64B5F6');
 
     const editBtn = `<button class="node-edit-btn" onclick="event.stopPropagation(); openNodeEditor('${n.id}')">✎</button>`;
     const gradeBadge = `<span class="grade-tag">${formatGradeBadge(n.minGrade)}</span>`;
@@ -237,23 +275,58 @@ function renderAll() {
       el.innerHTML = `${editBtn}<span class="domain-pill">${n.tag || 'Hauptgebiet'}</span><h2>${n.title}</h2><p>${n.text || ''}</p>`;
       el.onclick = () => { if (!isAdmin) selectDomain(n.id); };
     } else if (n.level === 2) {
-      const shortDesc = n.text
-        ? n.text.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, '$1').slice(0, 95) + (n.text.length > 95 ? '…' : '')
-        : 'Themenbereich erkunden';
-      el.innerHTML = `${editBtn}<div class="card-meta-row"><span class="domain-badge">${n.domain || ''}</span>${gradeBadge}</div><h3>${n.title}</h3><p>${shortDesc}</p>`;
+      // Ebene 2: Vorschau mit gerenderten Formeln + direkte Buttons zum Lesen des Inhalts & für Medien!
+      const hasContent = hasReadableContent(n);
+      const previewHtml = n.text
+        ? formatWikiText(n.text, 130)
+        : `<p>Themenbereich öffnen</p>`;
+
+      const footerButtons = [];
+      if (n.text && n.text.trim()) {
+        footerButtons.push(`<button class="chip read-more" onclick="event.stopPropagation(); openNodeReader('${n.id}')">Inhalt lesen</button>`);
+      }
+      (n.media || []).forEach((m, idx) => {
+        const icon = m.type === 'ggb' ? '⬡' : '▶';
+        footerButtons.push(`<button class="chip ${m.type}" onclick="event.stopPropagation(); openNodeReader('${n.id}', ${idx})">${icon} ${m.label}</button>`);
+      });
+
+      el.innerHTML = `
+        ${editBtn}
+        <div class="card-meta-row"><span class="domain-badge">${n.domain || ''}</span>${gradeBadge}</div>
+        <h3>${n.title}</h3>
+        <div class="card-preview-text">${previewHtml}</div>
+        <div class="card-footer">${footerButtons.join('')}</div>
+      `;
       el.onclick = () => { if (!isAdmin) selectTopic(n.id); };
     } else {
-      const isLong = (n.text || '').length > 200;
-      const bodyHtml = formatWikiText(n.text, true);
-      const chips = (n.media || []).map((m, idx) => {
-        const icon = m.type === 'ggb' ? '⬡' : '▶';
-        return `<button class="chip ${m.type}" onclick="event.stopPropagation(); openMediaModal('${n.id}', ${idx})">${icon} ${m.label}</button>`;
-      });
-      if (isLong) {
-        chips.push(`<button class="chip expand" onclick="event.stopPropagation(); openFullTextModal('${n.id}')">Mehr lesen</button>`);
+      // Ebene 3+: Jede Karte mit Inhalt ist direkt anklickbar & öffnet die vollständige Reader-Ansicht
+      const hasContent = hasReadableContent(n);
+      const bodyHtml = formatWikiText(n.text, 230);
+      const footerButtons = [];
+
+      if (n.text && n.text.trim()) {
+        footerButtons.push(`<button class="chip read-more" onclick="event.stopPropagation(); openNodeReader('${n.id}')">Vollständig lesen</button>`);
       }
-      const emptyHint = (!bodyHtml && chips.length === 0) ? `<div class="node-empty-hint">Inhalt folgt</div>` : '';
-      el.innerHTML = `${editBtn}<div class="card-meta-row"><span class="domain-badge">${n.domain || ''}</span>${gradeBadge}</div><h4>${n.title}</h4>${emptyHint}<div class="node-body-text">${bodyHtml}</div><div class="chips">${chips.join('')}</div>`;
+      (n.media || []).forEach((m, idx) => {
+        const icon = m.type === 'ggb' ? '⬡' : '▶';
+        footerButtons.push(`<button class="chip ${m.type}" onclick="event.stopPropagation(); openNodeReader('${n.id}', ${idx})">${icon} ${m.label}</button>`);
+      });
+
+      const emptyHint = !hasContent ? `<div class="node-empty-hint">Inhalt folgt</div>` : '';
+      el.innerHTML = `
+        ${editBtn}
+        <div class="card-meta-row"><span class="domain-badge">${n.domain || ''}</span>${gradeBadge}</div>
+        <h4>${n.title}</h4>
+        ${emptyHint}
+        <div class="node-body-text">${bodyHtml}</div>
+        <div class="card-footer">${footerButtons.join('')}</div>
+      `;
+      el.onclick = () => {
+        if (isAdmin) return;
+        if (hasContent) {
+          openNodeReader(n.id);
+        }
+      };
     }
 
     el.addEventListener('mouseenter', () => toggleChildFlows(n.id, true));
@@ -290,10 +363,10 @@ function drawEdges(nodeMap) {
 
     const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
     stop1.setAttribute('offset', '0%');
-    stop1.setAttribute('stop-color', p.color || '#58C4DD');
+    stop1.setAttribute('stop-color', p.color || '#64B5F6');
     const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
     stop2.setAttribute('offset', '100%');
-    stop2.setAttribute('stop-color', n.color || '#58C4DD');
+    stop2.setAttribute('stop-color', n.color || '#64B5F6');
     grad.appendChild(stop1);
     grad.appendChild(stop2);
     defs.appendChild(grad);
@@ -304,8 +377,8 @@ function drawEdges(nodeMap) {
     base.dataset.from = n.parentId;
     base.dataset.to = n.id;
     base.setAttribute('stroke', `url(#${gradId})`);
-    base.setAttribute('stroke-opacity', n.level === 2 ? '0.45' : '0.38');
-    base.setAttribute('stroke-width', n.level === 2 ? '2.6' : '2.1');
+    base.setAttribute('stroke-opacity', '0.32');
+    base.setAttribute('stroke-width', n.level === 2 ? '2.2' : '1.8');
     edgesSvg.appendChild(base);
 
     const flow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -314,8 +387,8 @@ function drawEdges(nodeMap) {
     flow.dataset.from = n.parentId;
     flow.dataset.to = n.id;
     flow.setAttribute('data-parent', n.parentId);
-    flow.setAttribute('stroke', n.color || '#58C4DD');
-    flow.setAttribute('stroke-width', n.level === 2 ? '3.2' : '2.5');
+    flow.setAttribute('stroke', n.color || '#64B5F6');
+    flow.setAttribute('stroke-width', n.level === 2 ? '2.8' : '2.2');
     edgesSvg.appendChild(flow);
   });
 }
@@ -410,23 +483,21 @@ function updateHudContext() {
   document.querySelectorAll('.crumb-btn').forEach(b => b.classList.remove('active'));
 
   if (viewLevel === 'macro') {
-    indicator.textContent = 'Ebene 1: Übersicht';
-    indicator.style.color = '#58C4DD';
-    indicator.style.borderColor = 'rgba(88,196,221,0.3)';
-    brandDot.style.background = '#58C4DD';
-    brandDot.style.boxShadow = '0 0 12px #58C4DD';
+    indicator.textContent = 'Übersicht';
+    indicator.style.color = 'var(--text-secondary)';
+    brandDot.style.background = '#64B5F6';
+    brandDot.style.boxShadow = '0 0 10px rgba(100,181,246,0.6)';
     const ov = document.getElementById('crumb-overview');
     if (ov) ov.classList.add('active');
   } else {
     const dom = appData.nodes.find(n => n.id === activeDomainId);
     const top = appData.nodes.find(n => n.id === activeTopicId);
     const activeNode = (viewLevel === 'micro' && top) ? top : dom;
-    const col = activeNode ? activeNode.color : '#58C4DD';
+    const col = activeNode ? activeNode.color : '#64B5F6';
 
     brandDot.style.background = col;
-    brandDot.style.boxShadow = `0 0 12px ${col}`;
+    brandDot.style.boxShadow = `0 0 10px ${col}`;
     indicator.style.color = col;
-    indicator.style.borderColor = col + '66';
 
     if (dom) {
       const cb = document.getElementById('crumb-' + dom.id);
@@ -434,7 +505,7 @@ function updateHudContext() {
     }
 
     if (viewLevel === 'meso') {
-      indicator.textContent = dom ? `${dom.title} · Themengebiete` : 'Themengebiete';
+      indicator.textContent = dom ? dom.title : 'Themengebiete';
     } else {
       indicator.textContent = top ? `${dom ? dom.title + ' › ' : ''}${top.title}` : 'Lernbausteine';
     }
@@ -442,16 +513,14 @@ function updateHudContext() {
 }
 
 function syncInfiniteGrid() {
-  const major = Math.max(24, 160 * scale);
+  const major = Math.max(28, 140 * scale);
   const minor = major / 5;
   const cx = viewport.clientWidth / 2 + panX;
   const cy = viewport.clientHeight / 2 + panY;
-  viewport.style.backgroundSize = `${major}px ${major}px, ${major}px ${major}px, ${minor}px ${minor}px, ${minor}px ${minor}px`;
-  viewport.style.backgroundPosition = `${cx}px ${cy}px, ${cx}px ${cy}px, ${cx}px ${cy}px, ${cx}px ${cy}px`;
+  viewport.style.backgroundSize = `${major}px ${major}px, ${minor}px ${minor}px`;
+  viewport.style.backgroundPosition = `${cx}px ${cy}px, ${cx}px ${cy}px`;
 }
 
-// Zooming ändert ausschließlich die Darstellung (scale, panX, panY),
-// wechselt aber NICHT mehr ungewollt die ausgewählte Ebene!
 function updateTransform() {
   world.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
   syncInfiniteGrid();
@@ -478,7 +547,6 @@ function focusOverview() {
 }
 
 function selectDomain(domainId, forceSelect = false) {
-  // Erneutes Klicken auf das bereits aktive Hauptgebiet (in Ebene 2) wählt es ab -> zurück zur Übersicht
   if (!forceSelect && viewLevel === 'meso' && activeDomainId === domainId) {
     focusOverview();
     return;
@@ -492,7 +560,6 @@ function selectDomain(domainId, forceSelect = false) {
 }
 
 function selectTopic(topicId, forceSelect = false) {
-  // Erneutes Klicken auf das bereits aktive Thema wählt es ab -> zurück zur Themenübersicht des Hauptgebiets
   if (!forceSelect && viewLevel === 'micro' && activeTopicId === topicId) {
     const parentDomId = activeDomainId;
     if (parentDomId) {
@@ -511,6 +578,7 @@ function selectTopic(topicId, forceSelect = false) {
 }
 
 function jumpToNode(nodeId) {
+  closeModal('mediaModal');
   const n = appData.nodes.find(item => item.id === nodeId);
   if (!n) return;
   if (!isNodeAllowedByGrade(n)) {
@@ -535,7 +603,7 @@ function jumpToNode(nodeId) {
   setTimeout(() => {
     const el = document.getElementById('el-' + n.id);
     if (el) {
-      el.style.boxShadow = `0 0 38px ${n.color || '#58C4DD'}`;
+      el.style.boxShadow = `0 0 0 2px ${n.color || '#64B5F6'}, 0 20px 44px rgba(0,0,0,0.4)`;
       setTimeout(() => { el.style.boxShadow = ''; }, 1400);
     }
   }, 120);
@@ -672,53 +740,131 @@ function setupSearch() {
     ).slice(0, 12);
     box.innerHTML = hits.map(h =>
       `<div class="search-item" onclick="jumpToNode('${h.id}'); document.getElementById('searchResults').classList.remove('open');">
-        <span>${h.title}</span><span class="search-domain" style="color:${h.color || '#94a3b8'}">${h.domain || ''} · ${formatGradeBadge(h.minGrade)}</span>
+        <span>${h.title}</span><span class="search-domain" style="color:${h.color || '#A1A1A6'}">${h.domain || ''} · ${formatGradeBadge(h.minGrade)}</span>
       </div>`
     ).join('');
     box.classList.toggle('open', hits.length > 0);
   });
 }
 
-// Media & Fulltext Modal
-function openMediaModal(nodeId, mediaIdx) {
-  const n = appData.nodes.find(item => item.id === nodeId);
-  if (!n || !n.media || !n.media[mediaIdx]) return;
-  const m = n.media[mediaIdx];
-  document.getElementById('m-title').textContent = `${n.title} – ${m.label}`;
-  const body = document.getElementById('m-body');
-
+// =========================================================================
+// UNIFIED APPLE READER SHEET (Volltext, Formeln, Medien & Unterthemen)
+// =========================================================================
+function renderMediaEmbedHtml(m) {
   if (m.type === 'ggb') {
-    document.getElementById('m-badge').textContent = 'GeoGebra Interaktiv';
     const ggbId = extractGeoGebraId(m.ggbId || m.url || '');
-    body.innerHTML = `<iframe src="https://www.geogebra.org/material/iframe/id/${ggbId}/width/860/height/520/border/333333/sfsb/true/smb/false/stb/false/stbh/false/ai/false/asb/false/sri/true/rc/false/ld/false/sdz/true/ctl/false" allowfullscreen></iframe>`;
-  } else {
-    document.getElementById('m-badge').textContent = m.type === 'vid-base' ? 'Grundlagen-Video' : 'Beispielrechnung';
-    const ytId = extractYouTubeId(m.url || '');
-    if (ytId) {
-      body.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ytId}" allowfullscreen></iframe>`;
-    } else if (m.url) {
-      body.innerHTML = `<video src="${m.url}" controls autoplay></video>`;
-    } else {
-      body.innerHTML = `<p style="padding:24px;">Keine Video-URL hinterlegt.</p>`;
-    }
+    return `<iframe src="https://www.geogebra.org/material/iframe/id/${ggbId}/width/860/height/500/border/222226/sfsb/true/smb/false/stb/false/stbh/false/ai/false/asb/false/sri/true/rc/false/ld/false/sdz/true/ctl/false" allowfullscreen></iframe>`;
   }
-  document.getElementById('mediaModal').classList.add('open');
+  const ytId = extractYouTubeId(m.url || '');
+  if (ytId) {
+    return `<iframe src="https://www.youtube-nocookie.com/embed/${ytId}" allowfullscreen></iframe>`;
+  }
+  if (m.url) {
+    return `<video src="${m.url}" controls autoplay></video>`;
+  }
+  return `<p style="padding:24px; color:var(--text-secondary);">Keine Medien-URL hinterlegt.</p>`;
 }
 
-function openFullTextModal(nodeId) {
+function switchReaderMedia(nodeId, mediaIdx) {
+  const n = appData.nodes.find(item => item.id === nodeId);
+  if (!n || !n.media || !n.media[mediaIdx]) return;
+  const box = document.getElementById('readerEmbedBox');
+  if (box) {
+    box.innerHTML = renderMediaEmbedHtml(n.media[mediaIdx]);
+  }
+  document.querySelectorAll('#readerMediaTabs .chip').forEach((btn, idx) => {
+    btn.style.outline = idx === mediaIdx ? '1.5px solid rgba(255,255,255,0.45)' : 'none';
+  });
+}
+
+function openNodeReader(nodeId, initialMediaIdx = null) {
   const n = appData.nodes.find(item => item.id === nodeId);
   if (!n) return;
-  document.getElementById('m-badge').textContent = `${n.domain || 'Lernbaustein'} · ${formatGradeBadge(n.minGrade)}`;
-  document.getElementById('m-title').textContent = n.title;
+  activeReaderNodeId = n.id;
+
+  const badgeEl = document.getElementById('m-badge');
+  const gradeEl = document.getElementById('m-grade');
+  const titleEl = document.getElementById('m-title');
+  const editShortcut = document.getElementById('m-edit-shortcut');
   const body = document.getElementById('m-body');
-  body.innerHTML = `<div class="node-body-text" style="padding:24px; width:100%; font-size:0.95rem;">${formatWikiText(n.text, false)}</div>`;
+
+  const levelLabel = n.level === 2 ? 'Themengebiet' : 'Lernbaustein';
+  badgeEl.textContent = `${n.domain || levelLabel} · ${levelLabel}`;
+  badgeEl.style.color = n.color || '#64B5F6';
+  gradeEl.textContent = formatGradeBadge(n.minGrade);
+  titleEl.textContent = n.title;
+  editShortcut.classList.toggle('hidden', !isAdmin);
+
+  const sections = [];
+
+  // 1) Vollständiger, ungekürzter Inhalt
+  if (n.text && n.text.trim()) {
+    sections.push(`<div class="reader-prose">${formatWikiText(n.text, null)}</div>`);
+  }
+
+  // 2) Interaktive Medien (GeoGebra & Videos) direkt im Sheet
+  const mediaList = n.media || [];
+  if (mediaList.length > 0) {
+    const activeIdx = initialMediaIdx !== null ? initialMediaIdx : 0;
+    const tabsHtml = mediaList.map((m, idx) => {
+      const icon = m.type === 'ggb' ? '⬡' : '▶';
+      const outline = idx === activeIdx ? 'style="outline: 1.5px solid rgba(255,255,255,0.45);"' : '';
+      return `<button class="chip ${m.type}" ${outline} onclick="switchReaderMedia('${n.id}', ${idx})">${icon} ${m.label}</button>`;
+    }).join('');
+    sections.push(`
+      <div class="reader-media-tabs" id="readerMediaTabs">${tabsHtml}</div>
+      <div class="reader-embed-box" id="readerEmbedBox">${renderMediaEmbedHtml(mediaList[activeIdx])}</div>
+    `);
+  }
+
+  // 3) Falls vorhanden: Direkte Unterbausteine zum Weiterlesen
+  const directChildren = appData.nodes.filter(ch => ch.parentId === n.id && isNodeAllowedByGrade(ch));
+  if (directChildren.length > 0) {
+    const pills = directChildren.map(ch => `
+      <button class="reader-child-pill" onclick="openChildFromReader('${ch.id}')">
+        <span>${ch.title}</span>
+        <span style="color:${ch.color || '#A1A1A6'}; font-size:0.75rem;">${hasReadableContent(ch) ? 'Öffnen ›' : '›'}</span>
+      </button>
+    `).join('');
+    sections.push(`
+      <div class="reader-children-section">
+        <div class="reader-children-title">Zugehörige Bausteine (${directChildren.length})</div>
+        <div class="reader-children-grid">${pills}</div>
+      </div>
+    `);
+  }
+
+  if (sections.length === 0) {
+    sections.push(`<p style="color:var(--text-secondary);">Für diesen Baustein wurde noch kein Text hinterlegt.</p>`);
+  }
+
+  body.innerHTML = sections.join('');
   renderMath(body);
   document.getElementById('mediaModal').classList.add('open');
 }
 
+function openChildFromReader(childId) {
+  const ch = appData.nodes.find(n => n.id === childId);
+  if (!ch) return;
+  if (hasReadableContent(ch)) {
+    openNodeReader(ch.id);
+  } else {
+    jumpToNode(ch.id);
+  }
+}
+
+function editFromReader() {
+  const id = activeReaderNodeId;
+  closeModal('mediaModal');
+  if (id) openNodeEditor(id);
+}
+
 function closeModal(id) {
   document.getElementById(id).classList.remove('open');
-  if (id === 'mediaModal') document.getElementById('m-body').innerHTML = '';
+  if (id === 'mediaModal') {
+    document.getElementById('m-body').innerHTML = '';
+    activeReaderNodeId = null;
+  }
 }
 
 function extractGeoGebraId(input) {
@@ -804,7 +950,7 @@ async function handleVaultSetup(e) {
   ghConfig = cfg;
   activateAdminUI();
   closeModal('authModal');
-  showToast('Tresor gespeichert & Admin-Modus aktiv!');
+  showToast('Tresor gespeichert & Bearbeitungsmodus aktiv');
 }
 
 async function handleVaultUnlock(e) {
@@ -818,7 +964,7 @@ async function handleVaultUnlock(e) {
     document.getElementById('unlockPassword').value = '';
     activateAdminUI();
     closeModal('authModal');
-    showToast('Willkommen zurück! Admin-Modus aktiv.');
+    showToast('Bearbeitungsmodus aktiv');
   } catch {
     alert('Falsches Admin-Passwort.');
   }
@@ -828,7 +974,7 @@ function exportVaultString() {
   const v = localStorage.getItem(VAULT_STORAGE_KEY);
   if (!v) return;
   navigator.clipboard.writeText(v).then(() => {
-    showToast('Verschlüsselter Sync-Code in Zwischenablage kopiert!');
+    showToast('Verschlüsselter Sync-Code kopiert');
   });
 }
 
@@ -840,7 +986,7 @@ function importVaultPrompt() {
     if (parsed.s && parsed.i && parsed.c) {
       localStorage.setItem(VAULT_STORAGE_KEY, code.trim());
       switchAuthView('unlock');
-      showToast('Sync-Code importiert! Jetzt mit deinem Passwort entsperren.');
+      showToast('Sync-Code importiert! Jetzt Passwort eingeben.');
     } else {
       alert('Ungültiger Sync-Code.');
     }
@@ -875,7 +1021,7 @@ function logoutAdmin() {
   document.getElementById('adminBar').classList.add('hidden');
   document.getElementById('adminLoginBtn').classList.remove('hidden');
   applyVisibilityFilter();
-  showToast('Abgemeldet');
+  showToast('Bearbeitungsmodus beendet');
 }
 
 function toggleShowAll(checked) {
@@ -885,7 +1031,7 @@ function toggleShowAll(checked) {
 
 function autoArrangeActiveCluster() {
   if (!activeTopicId) {
-    showToast('Bitte zuerst ein Themengebiet (Ebene 3) auswählen');
+    showToast('Bitte zuerst ein Themengebiet auswählen');
     return;
   }
   const topic = appData.nodes.find(n => n.id === activeTopicId);
@@ -907,8 +1053,8 @@ function autoArrangeActiveCluster() {
   const directKids = kidsMap.get(topic.id) || [];
   if (directKids.length === 0) return;
 
-  const rowUnit = 235;
-  const colStep = 385;
+  const rowUnit = 245;
+  const colStep = 395;
   const totalUnits = directKids.reduce((s, dk) => s + countLeaves(dk.id), 0);
   let curY = topic.y - ((totalUnits - 1) * rowUnit) / 2;
 
@@ -932,7 +1078,7 @@ function autoArrangeActiveCluster() {
   });
 
   renderAll();
-  showToast('Cluster hierarchisch ausgerichtet');
+  showToast('Cluster geordnet');
 }
 
 function attachAdminDrag(el, nodeObj) {
@@ -1014,7 +1160,7 @@ function openNodeEditor(nodeId) {
     const isRootDomain = DOMAIN_IDS.has(n.id) || n.level === 1;
     if (isRootDomain) n.level = 1;
 
-    document.getElementById('ed-heading').textContent = isRootDomain ? 'Hauptgebiet (Kreis) bearbeiten' : 'Baustein bearbeiten';
+    document.getElementById('ed-heading').textContent = isRootDomain ? 'Hauptgebiet bearbeiten' : 'Baustein bearbeiten';
     document.getElementById('ed-id').value = n.id;
     document.getElementById('ed-title').value = n.title;
     levelSelect.value = String(n.level);
@@ -1102,16 +1248,16 @@ function saveNodeFromEditor(e) {
       domain: level === 1 ? title : (parentNode ? parentNode.domain : 'Algebra'),
       title,
       text,
-      x: parentNode ? parentNode.x + 385 : 0,
+      x: parentNode ? parentNode.x + 395 : 0,
       y: parentNode ? parentNode.y : 0,
-      color: parentNode ? parentNode.color : '#58C4DD',
+      color: parentNode ? parentNode.color : '#64B5F6',
       media
     });
   }
 
   renderAll();
   closeModal('editorModal');
-  showToast('Änderung übernommen – mit „Auf GitHub speichern“ sichern');
+  showToast('Änderung übernommen – über „Veröffentlichen“ speichern');
 }
 
 function deleteCurrentNode() {
@@ -1162,11 +1308,11 @@ async function saveToGitHub() {
       const err = await putRes.json();
       throw new Error(err.message || 'GitHub API Fehler');
     }
-    showToast('Erfolgreich auf GitHub gespeichert! Live in ca. 30 Sek.');
+    showToast('Veröffentlicht! In ca. 30 Sek. auf GitHub Pages live.');
   } catch (err) {
     alert('Speichern fehlgeschlagen: ' + err.message);
   } finally {
-    btn.textContent = 'Auf GitHub speichern';
+    btn.textContent = 'Veröffentlichen';
     btn.disabled = false;
   }
 }
