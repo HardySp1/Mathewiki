@@ -1,8 +1,8 @@
 :root {
   /* Warm, bright, inviting Daylight Study Desk & Paper Palette */
   --canvas-bg: #F4F2EC;
-  --canvas-glow: rgba(255, 253, 248, 0.92);
-  --canvas-edge: rgba(226, 221, 210, 0.55);
+  --canvas-glow: rgba(255, 253, 248, 0.32);
+  --canvas-edge: rgba(222, 216, 204, 0.42);
   --dot-minor: rgba(58, 54, 46, 0.085);
   --dot-major: rgba(58, 54, 46, 0.19);
 
@@ -393,12 +393,13 @@ html, body {
   background-size: 140px 140px, 28px 28px;
   background-position: 50% 50%;
 }
-#viewport::after {
+#viewport::before {
   content: "";
   position: fixed;
   inset: 0;
+  z-index: 0;
   pointer-events: none;
-  background: radial-gradient(circle at 50% 45%, var(--canvas-glow) 0%, transparent 58%, var(--canvas-edge) 100%);
+  background: radial-gradient(circle at 50% 45%, var(--canvas-glow) 0%, transparent 62%, var(--canvas-edge) 100%);
 }
 #viewport:active { cursor: grabbing; }
 
@@ -406,6 +407,7 @@ html, body {
   position: absolute;
   top: 50%;
   left: 50%;
+  z-index: 1;
   transform-origin: 0 0;
   will-change: transform;
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
