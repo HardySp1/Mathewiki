@@ -1,5 +1,5 @@
 let appData = { titleToId: {}, nodes: [] };
-let scale = 0.34, panX = 0, panY = 0;
+let scale = 0.29, panX = 0, panY = 0;
 
 // Expliziter Ebenen-Zustand: Bleibt beim freien Zoomen fixiert, bis eine andere Ebene gewählt
 // oder die aktive Ebene erneut angeklickt (abgewählt) wird.
@@ -14,11 +14,54 @@ let isAdmin = false;
 let ghConfig = null;
 
 const DOMAIN_IDS = new Set(['arithmetik-algebra', 'geometrie', 'analysis', 'stochastik']);
+
+// Helle, einladende Farbpalette für Tageslicht-Hintergrund & Bücher/Karten
 const APPLE_DOMAIN_PALETTES = {
-  'arithmetik-algebra': ['#64B5F6', '#799CF2', '#9586E8', '#B07CE0'],
-  'geometrie':          ['#5AC8B0', '#6CC490', '#88BE74', '#A8BA63'],
-  'analysis':           ['#F2C95C', '#F0A65A', '#EB8663', '#E36D6D'],
-  'stochastik':         ['#A982C4', '#C27FB3', '#D6809F', '#E28A8E']
+  'arithmetik-algebra': ['#2B6CB0', '#3A7BD5', '#5271D6', '#6D65D4'],
+  'geometrie':          ['#1D8A74', '#26967D', '#359E74', '#4BA365'],
+  'analysis':           ['#C97A16', '#D4732A', '#D66144', '#CE535B'],
+  'stochastik':         ['#7E57C2', '#93559E', '#AA558A', '#BC5A77']
+};
+
+const DOMAIN_ROMAN = {
+  'arithmetik-algebra': 'Band I',
+  'geometrie':          'Band II',
+  'analysis':           'Band III',
+  'stochastik':         'Band IV'
+};
+
+const DOMAIN_WATERMARKS = {
+  'arithmetik-algebra': `
+    <svg class="book-watermark" viewBox="0 0 160 160" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round">
+      <line x1="20" y1="125" x2="142" y2="125"/>
+      <line x1="80" y1="18" x2="80" y2="142"/>
+      <path d="M 32 32 Q 80 155 128 32"/>
+      <circle cx="52" cy="125" r="4.5" fill="currentColor"/>
+      <circle cx="108" cy="125" r="4.5" fill="currentColor"/>
+    </svg>`,
+  'geometrie': `
+    <svg class="book-watermark" viewBox="0 0 160 160" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="80" cy="86" r="52"/>
+      <polygon points="80,34 128,118 32,118"/>
+      <line x1="80" y1="34" x2="80" y2="118" stroke-dasharray="5 5"/>
+      <path d="M 66 118 A 14 14 0 0 1 73 106"/>
+    </svg>`,
+  'analysis': `
+    <svg class="book-watermark" viewBox="0 0 160 160" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round">
+      <line x1="18" y1="126" x2="144" y2="126"/>
+      <line x1="30" y1="18" x2="30" y2="142"/>
+      <path d="M 30 112 C 55 36, 95 36, 134 94" fill="currentColor" fill-opacity="0.16"/>
+      <path d="M 30 112 C 55 36, 95 36, 134 94"/>
+      <line x1="42" y1="34" x2="128" y2="74" stroke-dasharray="6 5"/>
+      <circle cx="82" cy="53" r="5" fill="currentColor"/>
+    </svg>`,
+  'stochastik': `
+    <svg class="book-watermark" viewBox="0 0 160 160" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round">
+      <line x1="16" y1="128" x2="144" y2="128"/>
+      <path d="M 20 126 C 48 126, 56 34, 80 34 C 104 34, 112 126, 140 126" fill="currentColor" fill-opacity="0.16"/>
+      <path d="M 20 126 C 48 126, 56 34, 80 34 C 104 34, 112 126, 140 126"/>
+      <line x1="80" y1="34" x2="80" y2="128" stroke-dasharray="5 5"/>
+    </svg>`
 };
 
 const VAULT_STORAGE_KEY = 'mw_encrypted_vault_v1';
@@ -122,7 +165,7 @@ function setGradeFilter(val) {
       } else {
         focusOverview();
       }
-      buildDomainNav();
+      renderAll();
       return;
     }
   }
@@ -130,13 +173,12 @@ function setGradeFilter(val) {
     const dom = appData.nodes.find(n => n.id === activeDomainId);
     if (dom && !isNodeAllowedByGrade(dom)) {
       focusOverview();
-      buildDomainNav();
+      renderAll();
       return;
     }
   }
 
-  buildDomainNav();
-  applyVisibilityFilter();
+  renderAll();
   if (maxGradeFilter !== null) {
     showToast(`Stufenfilter: Bis ${val === '11' ? 'EF' : val === '12' ? 'Q1' : val === '13' ? 'Q2' : 'Klasse ' + val}`);
   }
@@ -180,9 +222,9 @@ function createSafePreview(rawText, maxChars) {
   const clean = rawText.trim();
   if (clean.length <= maxChars) return { text: clean, wasTruncated: false };
 
-  // Finde geschützte Blöcke ($$...$$, $...$, [[...]])
   const protectedRanges = [];
-  const tokenRegex = /(\$\$[\s\S]*?\$\$|\$[^$\n]+?\$|\[\[[^\]]+?\]\])/g;
+  const tokenRegex = /(\$\$[\s\S]*?\$\$|\$[^$
+]+?\$|\[\[[^\]]+?\]\])/g;
   let m;
   while ((m = tokenRegex.exec(clean)) !== null) {
     protectedRanges.push([m.index, m.index + m[0].length]);
@@ -191,7 +233,6 @@ function createSafePreview(rawText, maxChars) {
   let cut = maxChars;
   for (const [start, end] of protectedRanges) {
     if (cut > start && cut < end) {
-      // Wenn ein geschützter Block noch sinnvoll passt, bis nach dem Block schneiden, sonst davor
       cut = (end <= maxChars + 85) ? end : start;
       break;
     }
@@ -222,7 +263,10 @@ function formatWikiText(rawText, previewLimit = null) {
     }
     return `<strong>${label.trim()}</strong>`;
   });
-  return text.split(/\n\n+/).map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+  return text.split(/
+
++/).map(p => `<p>${p.replace(/
+/g, '<br>')}</p>`).join('');
 }
 
 function renderMath(el) {
@@ -253,6 +297,14 @@ function hasReadableContent(node) {
   return hasText || hasMedia;
 }
 
+function stripWikiMarkup(raw) {
+  if (!raw) return '';
+  return raw
+    .replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, label) => label.trim())
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function renderAll() {
   enrichNodeHierarchyAndColors();
   nodesLayer.innerHTML = '';
@@ -264,18 +316,67 @@ function renderAll() {
     el.id = 'el-' + n.id;
     el.style.left = n.x + 'px';
     el.style.top = n.y + 'px';
-    el.style.setProperty('--node-color', n.color || '#64B5F6');
-    el.style.setProperty('--parent-color', n.parentColor || n.color || '#64B5F6');
+    el.style.setProperty('--node-color', n.color || '#2B6CB0');
+    el.style.setProperty('--parent-color', n.parentColor || n.color || '#2B6CB0');
 
     const editBtn = `<button class="node-edit-btn" onclick="event.stopPropagation(); openNodeEditor('${n.id}')">✎</button>`;
     const gradeBadge = `<span class="grade-tag">${formatGradeBadge(n.minGrade)}</span>`;
 
     if (n.level === 1) {
-      el.innerHTML = `${editBtn}<span class="domain-pill">${n.tag || 'Hauptgebiet'}</span><h2>${n.title}</h2><p>${n.text || ''}</p>`;
+      el.classList.add('book-node');
+      const roman = DOMAIN_ROMAN[n.id] || n.tag || 'Band';
+      const watermark = DOMAIN_WATERMARKS[n.id] || '';
+      const plainDesc = stripWikiMarkup(n.text || '');
+      const shortDesc = plainDesc.length > 138 ? plainDesc.slice(0, 134).trim() + ' …' : plainDesc;
+
+      // Kapitel (Ebene 2) dieses Bandes passend zum Stufenfilter
+      const chapters = appData.nodes
+        .filter(ch => ch.level === 2 && ch.parentId === n.id && isNodeAllowedByGrade(ch))
+        .sort((a, b) => (a.minGrade || 5) - (b.minGrade || 5) || a.title.localeCompare(b.title));
+
+      // Anzahl aller Lernbausteine (Ebene 3+) im Band
+      const blockCount = appData.nodes.filter(
+        b => b.level >= 3 && getDomainRootId(b, nodeMap) === n.id && isNodeAllowedByGrade(b)
+      ).length;
+
+      const tocRows = chapters.map((ch, idx) => {
+        const num = String(idx + 1).padStart(2, '0');
+        return `
+          <button type="button" class="book-chapter-row" onclick="event.stopPropagation(); if(!isAdmin) selectTopic('${ch.id}')">
+            <span class="book-chapter-left">
+              <span class="book-chapter-num">${num}</span>
+              <span class="book-chapter-title">${ch.title}</span>
+            </span>
+            <span class="book-chapter-arrow">›</span>
+          </button>
+        `;
+      }).join('');
+
+      el.innerHTML = `
+        <div class="book-spine"><span class="book-spine-roman">${roman}</span></div>
+        <div class="book-pages-edge"></div>
+        <div class="book-ribbon"></div>
+        ${watermark}
+        ${editBtn}
+        <div class="book-top-row">
+          <span class="book-tag-pill">${n.tag || roman}</span>
+          <span class="book-grade-pill">${formatGradeBadge(n.minGrade)}</span>
+        </div>
+        <h2>${n.title}</h2>
+        ${shortDesc ? `<p class="book-desc">${shortDesc}</p>` : ''}
+        <div class="book-toc">
+          <div class="book-toc-header">Inhaltsverzeichnis · ${chapters.length} ${chapters.length === 1 ? 'Kapitel' : 'Kapitel'}</div>
+          <div class="book-toc-list">
+            ${tocRows || '<div style="font-size:1.6rem; color:var(--text-tertiary);">Keine Kapitel in dieser Stufe</div>'}
+          </div>
+        </div>
+        <div class="book-footer">
+          <span class="book-stats">${blockCount} Lernbausteine</span>
+          <span class="book-open-cta">Band aufschlagen →</span>
+        </div>
+      `;
       el.onclick = () => { if (!isAdmin) selectDomain(n.id); };
     } else if (n.level === 2) {
-      // Ebene 2: Vorschau mit gerenderten Formeln + direkte Buttons zum Lesen des Inhalts & für Medien!
-      const hasContent = hasReadableContent(n);
       const previewHtml = n.text
         ? formatWikiText(n.text, 130)
         : `<p>Themenbereich öffnen</p>`;
@@ -298,7 +399,6 @@ function renderAll() {
       `;
       el.onclick = () => { if (!isAdmin) selectTopic(n.id); };
     } else {
-      // Ebene 3+: Jede Karte mit Inhalt ist direkt anklickbar & öffnet die vollständige Reader-Ansicht
       const hasContent = hasReadableContent(n);
       const bodyHtml = formatWikiText(n.text, 230);
       const footerButtons = [];
@@ -362,10 +462,10 @@ function drawEdges(nodeMap) {
 
     const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
     stop1.setAttribute('offset', '0%');
-    stop1.setAttribute('stop-color', p.color || '#64B5F6');
+    stop1.setAttribute('stop-color', p.color || '#2B6CB0');
     const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
     stop2.setAttribute('offset', '100%');
-    stop2.setAttribute('stop-color', n.color || '#64B5F6');
+    stop2.setAttribute('stop-color', n.color || '#2B6CB0');
     grad.appendChild(stop1);
     grad.appendChild(stop2);
     defs.appendChild(grad);
@@ -376,8 +476,8 @@ function drawEdges(nodeMap) {
     base.dataset.from = n.parentId;
     base.dataset.to = n.id;
     base.setAttribute('stroke', `url(#${gradId})`);
-    base.setAttribute('stroke-opacity', '0.32');
-    base.setAttribute('stroke-width', n.level === 2 ? '2.2' : '1.8');
+    base.setAttribute('stroke-opacity', '0.42');
+    base.setAttribute('stroke-width', n.level === 2 ? '2.4' : '2');
     edgesSvg.appendChild(base);
 
     const flow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -386,8 +486,8 @@ function drawEdges(nodeMap) {
     flow.dataset.from = n.parentId;
     flow.dataset.to = n.id;
     flow.setAttribute('data-parent', n.parentId);
-    flow.setAttribute('stroke', n.color || '#64B5F6');
-    flow.setAttribute('stroke-width', n.level === 2 ? '2.8' : '2.2');
+    flow.setAttribute('stroke', n.color || '#2B6CB0');
+    flow.setAttribute('stroke-width', n.level === 2 ? '3.2' : '2.6');
     edgesSvg.appendChild(flow);
   });
 }
@@ -482,17 +582,17 @@ function updateHudContext() {
   document.querySelectorAll('.crumb-btn').forEach(b => b.classList.remove('active'));
 
   if (viewLevel === 'macro') {
-    indicator.textContent = 'Übersicht';
+    indicator.textContent = 'Bücherübersicht';
     indicator.style.color = 'var(--text-secondary)';
-    brandDot.style.background = '#64B5F6';
-    brandDot.style.boxShadow = '0 0 10px rgba(100,181,246,0.6)';
+    brandDot.style.background = '#2B6CB0';
+    brandDot.style.boxShadow = '0 0 10px rgba(43, 108, 176, 0.45)';
     const ov = document.getElementById('crumb-overview');
     if (ov) ov.classList.add('active');
   } else {
     const dom = appData.nodes.find(n => n.id === activeDomainId);
     const top = appData.nodes.find(n => n.id === activeTopicId);
     const activeNode = (viewLevel === 'micro' && top) ? top : dom;
-    const col = activeNode ? activeNode.color : '#64B5F6';
+    const col = activeNode ? activeNode.color : '#2B6CB0';
 
     brandDot.style.background = col;
     brandDot.style.boxShadow = `0 0 10px ${col}`;
@@ -525,15 +625,10 @@ function updateTransform() {
   syncInfiniteGrid();
 }
 
-function getInitialOverviewScale() {
-  const minDim = Math.min(window.innerWidth, window.innerHeight);
-  return minDim < 850 ? 0.25 : 0.34;
-}
-
-function focusAt(worldX, worldY, targetScale) {
+function focusAt(worldX, worldY, targetScale, screenOffsetY = 0) {
   scale = targetScale;
   panX = -worldX * scale;
-  panY = -worldY * scale;
+  panY = -worldY * scale + screenOffsetY;
   updateTransform();
   applyVisibilityFilter();
 }
@@ -542,7 +637,34 @@ function focusOverview() {
   viewLevel = 'macro';
   activeDomainId = null;
   activeTopicId = null;
-  focusAt(0, 0, getInitialOverviewScale());
+
+  const books = appData.nodes.filter(n => n.level === 1 && isNodeAllowedByGrade(n));
+  if (books.length === 0) {
+    focusAt(0, 0, 0.28, 26);
+    return;
+  }
+
+  const halfBookW = 490;
+  const halfBookH = 580;
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  books.forEach(b => {
+    minX = Math.min(minX, b.x - halfBookW);
+    maxX = Math.max(maxX, b.x + halfBookW);
+    minY = Math.min(minY, b.y - halfBookH);
+    maxY = Math.max(maxY, b.y + halfBookH);
+  });
+
+  const worldW = Math.max(1000, maxX - minX);
+  const worldH = Math.max(1000, maxY - minY);
+  const centerX = (minX + maxX) / 2;
+  const centerY = (minY + maxY) / 2;
+
+  const hudHeight = document.querySelector('.hud-top')?.offsetHeight || 68;
+  const availW = Math.max(320, viewport.clientWidth - 64);
+  const availH = Math.max(320, viewport.clientHeight - hudHeight - 52);
+  const fitScale = Math.min(0.45, Math.max(0.18, Math.min(availW / worldW, availH / worldH)));
+
+  focusAt(centerX, centerY, fitScale, hudHeight * 0.42);
 }
 
 function selectDomain(domainId, forceSelect = false) {
@@ -555,7 +677,7 @@ function selectDomain(domainId, forceSelect = false) {
   viewLevel = 'meso';
   activeDomainId = d.id;
   activeTopicId = null;
-  focusAt(d.x, d.y, 0.72);
+  focusAt(d.x, d.y, 0.72, 20);
 }
 
 function selectTopic(topicId, forceSelect = false) {
@@ -573,7 +695,7 @@ function selectTopic(topicId, forceSelect = false) {
   viewLevel = 'micro';
   activeTopicId = t.id;
   activeDomainId = t.parentId;
-  focusAt(t.x + 280, t.y, 0.95);
+  focusAt(t.x + 280, t.y, 0.95, 16);
 }
 
 function jumpToNode(nodeId) {
@@ -586,6 +708,7 @@ function jumpToNode(nodeId) {
     if (sel) sel.value = 'all';
     const wrap = document.getElementById('gradeFilterWrap');
     if (wrap) wrap.classList.remove('active-filter');
+    renderAll();
   }
   if (n.level === 1) {
     selectDomain(n.id, true);
@@ -597,12 +720,12 @@ function jumpToNode(nodeId) {
     viewLevel = 'micro';
     if (top) activeTopicId = top.id;
     if (dom) activeDomainId = dom.id;
-    focusAt(n.x, n.y, 1.05);
+    focusAt(n.x, n.y, 1.05, 16);
   }
   setTimeout(() => {
     const el = document.getElementById('el-' + n.id);
     if (el) {
-      el.style.boxShadow = `0 0 0 2px ${n.color || '#64B5F6'}, 0 20px 44px rgba(0,0,0,0.4)`;
+      el.style.boxShadow = `0 0 0 2.5px ${n.color || '#2B6CB0'}, 0 20px 44px rgba(24,28,38,0.16)`;
       setTimeout(() => { el.style.boxShadow = ''; }, 1400);
     }
   }, 120);
@@ -739,7 +862,7 @@ function setupSearch() {
     ).slice(0, 12);
     box.innerHTML = hits.map(h =>
       `<div class="search-item" onclick="jumpToNode('${h.id}'); document.getElementById('searchResults').classList.remove('open');">
-        <span>${h.title}</span><span class="search-domain" style="color:${h.color || '#A1A1A6'}">${h.domain || ''} · ${formatGradeBadge(h.minGrade)}</span>
+        <span>${h.title}</span><span class="search-domain" style="color:${h.color || '#525866'}">${h.domain || ''} · ${formatGradeBadge(h.minGrade)}</span>
       </div>`
     ).join('');
     box.classList.toggle('open', hits.length > 0);
@@ -747,12 +870,12 @@ function setupSearch() {
 }
 
 // =========================================================================
-// UNIFIED APPLE READER SHEET (Volltext, Formeln, Medien & Unterthemen)
+// UNIFIED EDITORIAL READER SHEET (Volltext, Formeln, Medien & Unterthemen)
 // =========================================================================
 function renderMediaEmbedHtml(m) {
   if (m.type === 'ggb') {
     const ggbId = extractGeoGebraId(m.ggbId || m.url || '');
-    return `<iframe src="https://www.geogebra.org/material/iframe/id/${ggbId}/width/860/height/500/border/222226/sfsb/true/smb/false/stb/false/stbh/false/ai/false/asb/false/sri/true/rc/false/ld/false/sdz/true/ctl/false" allowfullscreen></iframe>`;
+    return `<iframe src="https://www.geogebra.org/material/iframe/id/${ggbId}/width/860/height/500/border/F4F2ED/sfsb/true/smb/false/stb/false/stbh/false/ai/false/asb/false/sri/true/rc/false/ld/false/sdz/true/ctl/false" allowfullscreen></iframe>`;
   }
   const ytId = extractYouTubeId(m.url || '');
   if (ytId) {
@@ -772,7 +895,7 @@ function switchReaderMedia(nodeId, mediaIdx) {
     box.innerHTML = renderMediaEmbedHtml(n.media[mediaIdx]);
   }
   document.querySelectorAll('#readerMediaTabs .chip').forEach((btn, idx) => {
-    btn.style.outline = idx === mediaIdx ? '1.5px solid rgba(255,255,255,0.45)' : 'none';
+    btn.style.outline = idx === mediaIdx ? '2px solid rgba(24,28,38,0.28)' : 'none';
   });
 }
 
@@ -787,27 +910,25 @@ function openNodeReader(nodeId, initialMediaIdx = null) {
   const editShortcut = document.getElementById('m-edit-shortcut');
   const body = document.getElementById('m-body');
 
-  const levelLabel = n.level === 2 ? 'Themengebiet' : 'Lernbaustein';
+  const levelLabel = n.level === 1 ? 'Hauptgebiet' : (n.level === 2 ? 'Themengebiet' : 'Lernbaustein');
   badgeEl.textContent = `${n.domain || levelLabel} · ${levelLabel}`;
-  badgeEl.style.color = n.color || '#64B5F6';
+  badgeEl.style.color = n.color || '#2B6CB0';
   gradeEl.textContent = formatGradeBadge(n.minGrade);
   titleEl.textContent = n.title;
   editShortcut.classList.toggle('hidden', !isAdmin);
 
   const sections = [];
 
-  // 1) Vollständiger, ungekürzter Inhalt
   if (n.text && n.text.trim()) {
     sections.push(`<div class="reader-prose">${formatWikiText(n.text, null)}</div>`);
   }
 
-  // 2) Interaktive Medien (GeoGebra & Videos) direkt im Sheet
   const mediaList = n.media || [];
   if (mediaList.length > 0) {
     const activeIdx = initialMediaIdx !== null ? initialMediaIdx : 0;
     const tabsHtml = mediaList.map((m, idx) => {
       const icon = m.type === 'ggb' ? '⬡' : '▶';
-      const outline = idx === activeIdx ? 'style="outline: 1.5px solid rgba(255,255,255,0.45);"' : '';
+      const outline = idx === activeIdx ? 'style="outline: 2px solid rgba(24,28,38,0.28);"' : '';
       return `<button class="chip ${m.type}" ${outline} onclick="switchReaderMedia('${n.id}', ${idx})">${icon} ${m.label}</button>`;
     }).join('');
     sections.push(`
@@ -816,13 +937,12 @@ function openNodeReader(nodeId, initialMediaIdx = null) {
     `);
   }
 
-  // 3) Falls vorhanden: Direkte Unterbausteine zum Weiterlesen
   const directChildren = appData.nodes.filter(ch => ch.parentId === n.id && isNodeAllowedByGrade(ch));
   if (directChildren.length > 0) {
     const pills = directChildren.map(ch => `
       <button class="reader-child-pill" onclick="openChildFromReader('${ch.id}')">
         <span>${ch.title}</span>
-        <span style="color:${ch.color || '#A1A1A6'}; font-size:0.75rem;">${hasReadableContent(ch) ? 'Öffnen ›' : '›'}</span>
+        <span style="color:${ch.color || '#525866'}; font-size:0.75rem;">${hasReadableContent(ch) ? 'Öffnen ›' : '›'}</span>
       </button>
     `).join('');
     sections.push(`
@@ -1159,7 +1279,7 @@ function openNodeEditor(nodeId) {
     const isRootDomain = DOMAIN_IDS.has(n.id) || n.level === 1;
     if (isRootDomain) n.level = 1;
 
-    document.getElementById('ed-heading').textContent = isRootDomain ? 'Hauptgebiet bearbeiten' : 'Baustein bearbeiten';
+    document.getElementById('ed-heading').textContent = isRootDomain ? 'Hauptgebiet (Band) bearbeiten' : 'Baustein bearbeiten';
     document.getElementById('ed-id').value = n.id;
     document.getElementById('ed-title').value = n.title;
     levelSelect.value = String(n.level);
@@ -1249,7 +1369,7 @@ function saveNodeFromEditor(e) {
       text,
       x: parentNode ? parentNode.x + 395 : 0,
       y: parentNode ? parentNode.y : 0,
-      color: parentNode ? parentNode.color : '#64B5F6',
+      color: parentNode ? parentNode.color : '#2B6CB0',
       media
     });
   }

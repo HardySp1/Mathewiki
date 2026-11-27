@@ -7,18 +7,18 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-  <link rel="stylesheet" href="styles.css?v=8" />
+  <link rel="stylesheet" href="styles.css?v=9" />
 </head>
 <body data-zoom="macro">
 
   <header class="hud-top">
-    <div class="brand" onclick="focusOverview()" title="Zur Gesamtübersicht">
+    <div class="brand" onclick="focusOverview()" title="Zur Gesamtübersicht (Bücherregal)">
       <span class="brand-dot" id="brandDot"></span>
       <span>Mathe-Wissensraum</span>
     </div>
 
     <div class="search-wrap">
-      <input type="search" id="searchInput" placeholder="Suchen…" autocomplete="off" />
+      <input type="search" id="searchInput" placeholder="Thema oder Begriff suchen…" autocomplete="off" />
       <div id="searchResults" class="search-results"></div>
     </div>
 
@@ -50,7 +50,7 @@
 
   <!-- Admin-Aktionsleiste -->
   <div id="adminBar" class="admin-bar hidden">
-    <span class="admin-status">● Bearbeitungsmodus · Karten frei verschieben</span>
+    <span class="admin-status">● Bearbeitungsmodus · Bücher &amp; Karten frei verschieben</span>
     <div class="admin-bar-btns">
       <label class="admin-check">
         <input type="checkbox" id="showAllToggle" onchange="toggleShowAll(this.checked)" />
@@ -77,7 +77,7 @@
     <button onclick="focusOverview()" title="Gesamtübersicht">&#8962;</button>
   </div>
 
-  <!-- Apple-Style Reader & Medien Sheet -->
+  <!-- Editorial Reader & Medien Sheet -->
   <div id="mediaModal" class="modal-backdrop" onclick="if(event.target===this) closeModal('mediaModal')">
     <div class="modal-card modal-reader">
       <div class="modal-header">
@@ -160,7 +160,7 @@
           </label>
           <label id="ed-level-wrap">Ebene
             <select id="ed-level" onchange="toggleParentSelectVisibility()">
-              <option value="1">Ebene 1 (Hauptgebiet)</option>
+              <option value="1">Ebene 1 (Hauptgebiet / Band)</option>
               <option value="2">Ebene 2 (Themengebiet)</option>
               <option value="3" selected>Ebene 3 (Lernbaustein)</option>
             </select>
@@ -213,6 +213,6 @@
 
   <div id="toast" class="toast hidden"></div>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>
