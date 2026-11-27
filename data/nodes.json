@@ -1862,7 +1862,7 @@
       "parentId": "funktionen",
       "domain": "Analysis",
       "title": "lineare Funktionen",
-      "text": "Lineare Funktionen haben die Form $$f(x)=m \\cdot x+b$$ mit der [[Steigung|Steigung (lin)]] $$𝑚$$ und dem [[Y-Achsenabschnitt|Y-Achsenabschnitt (lin)]] $$b$$. Sie stellen eine konstante Änderungsrate dar und ergeben in der grafischen Darstellung eine Gerade.",
+      "text": "Lineare Funktionen haben die Form \n$ f(x)=m \\cdot x+b$ \nmit der [[Steigung|Steigung (lin)]] $𝑚$ und dem [[Y-Achsenabschnitt|Y-Achsenabschnitt (lin)]] $b$. Sie stellen eine konstante Änderungsrate dar und ergeben in der grafischen Darstellung eine Gerade.",
       "x": -2021,
       "y": 200,
       "color": "#D66144",
