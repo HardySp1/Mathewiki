@@ -223,8 +223,7 @@ function createSafePreview(rawText, maxChars) {
   if (clean.length <= maxChars) return { text: clean, wasTruncated: false };
 
   const protectedRanges = [];
-  const tokenRegex = /(\$\$[\s\S]*?\$\$|\$[^$
-]+?\$|\[\[[^\]]+?\]\])/g;
+  const tokenRegex = /(\$\$[\s\S]*?\$\$|\$[^$\n]+?\$|\[\[[^\]]+?\]\])/g;
   let m;
   while ((m = tokenRegex.exec(clean)) !== null) {
     protectedRanges.push([m.index, m.index + m[0].length]);
@@ -263,10 +262,7 @@ function formatWikiText(rawText, previewLimit = null) {
     }
     return `<strong>${label.trim()}</strong>`;
   });
-  return text.split(/
-
-+/).map(p => `<p>${p.replace(/
-/g, '<br>')}</p>`).join('');
+  return text.split(/\n\n+/).map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
 }
 
 function renderMath(el) {
